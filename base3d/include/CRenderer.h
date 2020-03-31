@@ -10,6 +10,12 @@ extern enum ECommand mBufferedCommand;
 
 void graphicsInit();
 
+void graphicsPut(int x, int y );
+
+void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y);
+
+void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1);
+
 void graphicsShutdown();
 
 void flipRenderer();
