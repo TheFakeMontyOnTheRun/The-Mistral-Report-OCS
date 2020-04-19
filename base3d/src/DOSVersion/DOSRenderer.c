@@ -147,6 +147,103 @@ void handleSystemEvents() {
     }
 }
 
+void graphicsPut(int x, int y ) {
+    x = x * 2;
+    framebuffer[(320 * y) + x] = 0;
+    framebuffer[(320 * y) + x + 1] = 0;
+}
+
+void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
+
+    if (x0 == x1) {
+
+        int16_t _y0 = y0;
+        int16_t _y1 = y1;
+
+        if (y0 > y1) {
+            _y0 = y1;
+            _y1 = y0;
+        }
+
+
+        for (int16_t y = _y0; y <= _y1; ++y) {
+            if (x0 < 0 || x0 >= 256 || y < 0 || y >= 128) {
+                continue;
+            }
+
+            graphicsPut(x0, y );
+        }
+        return;
+    }
+
+    if (y0 == y1) {
+        int16_t _x0 = x0;
+        int16_t _x1 = x1;
+
+        if (x0 > x1) {
+            _x0 = x1;
+            _x1 = x0;
+        }
+
+        for (int16_t x = _x0; x <= _x1; ++x) {
+            if (x < 0 || x >= 256 || y0 < 0 || y0 >= 128) {
+                continue;
+            }
+
+            graphicsPut(x, y0 );
+        }
+        return;
+    }
+
+    //switching x0 with x1
+    if (x0 > x1) {
+        x0 = x0 + x1;
+        x1 = x0 - x1;
+        x0 = x0 - x1;
+
+        y0 = y0 + y1;
+        y1 = y0 - y1;
+        y0 = y0 - y1;
+    }
+
+    {
+        //https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+        int dx = abs(x1 - x0);
+        int sx = x0 < x1 ? 1 : -1;
+        int dy = -abs(y1 - y0);
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx + dy;  /* error value e_xy */
+
+        while (1) {
+            framebuffer[(320 * y0) + (2 * x0)] = 0;
+            /* loop */
+            if (x0 == x1 && y0 == y1) return;
+            int e2 = 2 * err;
+
+            if (e2 >= dy) {
+                err += dy; /* e_xy+e_x > 0 */
+                x0 += sx;
+            }
+
+            if (e2 <= dx) {
+                /* e_xy+e_y < 0 */
+                err += dx;
+                y0 += sy;
+            }
+        }
+    }
+}
+
+void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y) {
+    fix_line(x0, y, x1, y);
+}
+
+void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1 ) {
+    fix_line(x0, y0, x0, y1);
+}
+
+
 void flipRenderer() {
     dosmemput(&framebuffer[0], 320 * 200, 0xa0000);
 }
