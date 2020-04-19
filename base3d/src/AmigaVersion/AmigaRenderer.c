@@ -147,11 +147,11 @@ uint8_t getPaletteEntry ( uint32_t origin ) {
   }
 
   shade = 0;
-  shade += ( ( ( ( ( origin & 0x0000FF ) ) << 2 ) >> 8 ) ) << 0;
-  shade += ( ( ( ( ( origin & 0x00FF00 ) >> 8 ) << 2 ) >> 8 ) ) << 2;
-  shade += ( ( ( ( ( origin & 0xFF0000 ) >> 16 ) << 1 ) >> 8 ) ) << 4;
+  shade += ( ( ( ( ( origin & 0x0000FF )       ) << 1 ) >> 8 ) ) << 0;
+  shade += ( ( ( ( ( origin & 0x00FF00 ) >>  8 ) << 1 ) >> 8 ) ) << 1;
+  shade += ( ( ( ( ( origin & 0xFF0000 ) >> 16 ) << 1 ) >> 8 ) ) << 2;
 
-  return shade;
+  return shade & 15;
 }
 #else
 
@@ -163,8 +163,8 @@ uint8_t getPaletteEntry(uint32_t origin) {
     }
 
     shade = 0;
-    shade += (((((origin & 0x0000FF)) << 2) >> 8)) << 6;
-    shade += (((((origin & 0x00FF00) >> 8) << 3) >> 8)) << 3;
+    shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
+    shade += (((((origin & 0x00FF00) >>  8) << 3) >> 8)) << 3;
     shade += (((((origin & 0xFF0000) >> 16) << 3) >> 8)) << 0;
 
     return shade;
@@ -315,22 +315,23 @@ void graphicsInit() {
     }
 
 #ifdef AGA5BPP
-    SetRGB4 ( &screen->ViewPort, 0, 0, 0, 0 );
-    SetRGB4 ( &screen->ViewPort, 1, 0, 0, 64 );
-    SetRGB4 ( &screen->ViewPort, 2, 0, 0, 128 );
-    SetRGB4 ( &screen->ViewPort, 3, 0, 0, 192 );
-    SetRGB4 ( &screen->ViewPort, 4, 0, 64, 0 );
-    SetRGB4 ( &screen->ViewPort, 5, 0, 64, 64 );
-    SetRGB4 ( &screen->ViewPort, 6, 0, 64, 128 );
-    SetRGB4 ( &screen->ViewPort, 7, 0, 64, 192 );
-    SetRGB4 ( &screen->ViewPort, 8, 0, 128, 0 );
-    SetRGB4 ( &screen->ViewPort, 9, 0, 128, 64 );
-    SetRGB4 ( &screen->ViewPort, 10, 0, 128, 128 );
-    SetRGB4 ( &screen->ViewPort, 11, 0, 128, 192 );
-    SetRGB4 ( &screen->ViewPort, 12, 0, 192, 0 );
-    SetRGB4 ( &screen->ViewPort, 13, 0, 192, 64 );
-    SetRGB4 ( &screen->ViewPort, 14, 0, 192, 128 );
-    SetRGB4 ( &screen->ViewPort, 15, 0, 192, 192 );
+
+    for (r = 0; r < 256; r += 255) {
+        for (g = 0; g < 256; g += 255) {
+            for (b = 0; b < 256; b += 255) {
+                uint32_t pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
+                uint8_t paletteEntry = getPaletteEntry(pixel);
+                palete[paletteEntry].r = r;
+                palete[paletteEntry].g = g;
+                palete[paletteEntry].b = b;
+            }
+        }
+    }
+
+    for (c = 0; c < 16; ++c) {
+        SetRGB4(&screen->ViewPort, c, palete[c].r, palete[c].g,
+                palete[c].b);
+    }
 #else
     for (r = 0; r < 256; r += 16) {
         for (g = 0; g < 256; g += 8) {

@@ -108,7 +108,7 @@ void HelpScreen_repaintCallback(void) {
         }
 
         drawTextAt(40 - len - 2, (26 - HelpScreen_optionsCount) + c - 2,
-                   &HelpScreen_options[c][0], isCursor ? 255 : 0);
+                   &HelpScreen_options[c][0], isCursor ? 8 : 0);
     }
 }
 
@@ -133,7 +133,7 @@ int32_t HelpScreen_tickCallback(int32_t tag, void *data) {
             case kConfirmInputBlink4:
             case kConfirmInputBlink5:
             case kConfirmInputBlink6:
-                timeUntilNextState = 250;
+                timeUntilNextState = 100;
                 currentPresentationState =
                         (enum EPresentationState) ((int) currentPresentationState + 1);
                 break;

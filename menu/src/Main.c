@@ -139,25 +139,32 @@ void mainLoop() {
     int32_t newState;
 
     handleSystemEvents();
-    now = (end_clock - start_clock) / (UCLOCKS_PER_SEC / 1000);
-    delta_time = now - prev;
-    prev = now;
 
-    /* protect against machines too fast for their own good. */
-    if (delta_time <= 0) {
-        delta_time = 1;
-    }
-    input = getInput();
+#ifdef AMIGA
+	#ifdef AGA8BPP
+		delta_time = 50;
+	#else
+		delta_time = 50;
+	#endif
+#else
+	now = (end_clock - start_clock) / (UCLOCKS_PER_SEC / 1000);
+	delta_time = now - prev;
+	prev = now;
+
+	/* protect against machines too fast for their own good. */
+	if (delta_time <= 0) {
+		delta_time = 1;
+	}
 
 #ifdef ANDROID
-    delta_time = 50;
+	delta_time = 50;
 #endif
-
-
 #ifdef __EMSCRIPTEN__
     delta_time = 500;
 #endif
-    newState = tickCallback(input, &delta_time);
+#endif
+	input = getInput();
+	newState = tickCallback(input, &delta_time);
 
     if (input == kCommandQuit) {
         isRunning = FALSE;
@@ -182,7 +189,7 @@ int main(int argc, char **argv) {
             "The Mistral Report - Invisible Affairs, 2018-2019 - by the Brotherhood "
             "of 13h");
 
-    srand(time(NULL));
+    //srand(time(NULL));
     initHW();
     enterState(kMainMenu);
 

@@ -101,11 +101,11 @@ void CreditsScreen_repaintCallback(void) {
 
     if (mainText != NULL) {
 
-        fill(0, 0, 320, (lines + 3) * 8, 255, FALSE);
+        fill(0, 0, 320, (lines + 3) * 8, 15, FALSE);
 
         drawRect(0, 0, 320, (lines + 3) * 8, 0);
         fill(0, 0, 320, 8, 0, FALSE);
-        drawTextAt(2, 1, "Credits", 255);
+        drawTextAt(2, 1, "Credits", 4);
         drawTextAt(1, 3, mainText, 0);
     }
 
@@ -114,20 +114,20 @@ void CreditsScreen_repaintCallback(void) {
     drawRect(8, 128, 64, 64, 0);
 
     fill(8, 128, 64, 8, 0, FALSE);
-    drawTextAt(3, 17, "Monty", 255);
+    drawTextAt(3, 17, "Monty", 4);
 
     fill(152, 128, 64, 64, 255, FALSE);
     drawBitmap(152, 128, belle, TRUE);
     drawRect(152, 128, 64, 64, 0);
 
     fill(152, 128, 64, 8, 0, FALSE);
-    drawTextAt(21, 17, "Belle", 255);
+    drawTextAt(21, 17, "Belle", 4);
 
     fill(320 - (len * 8) - 8 - 16, 200 - optionsHeight - 8 - 16,
          (len * 8) + 16, optionsHeight + 16, 0, TRUE);
 
     fill(320 - (len * 8) - 16 - 16, 200 - optionsHeight - 16 - 16,
-         (len * 8) + 16, optionsHeight + 16, 255, FALSE);
+         (len * 8) + 16, optionsHeight + 16, 15, FALSE);
 
     drawRect(320 - (len * 8) - 16 - 16, 200 - optionsHeight - 16 - 16,
              (len * 8) + 16, optionsHeight + 16, 0);
@@ -151,7 +151,7 @@ void CreditsScreen_repaintCallback(void) {
         }
 
         drawTextAt(40 - len - 2, (26 - CreditsScreen_optionsCount) + c - 2,
-                   &CreditsScreen_options[c][0], isCursor ? 255 : 0);
+                   &CreditsScreen_options[c][0], isCursor ? 4 : 0);
     }
 }
 
@@ -176,7 +176,7 @@ int32_t CreditsScreen_tickCallback(int32_t tag, void *data) {
             case kConfirmInputBlink4:
             case kConfirmInputBlink5:
             case kConfirmInputBlink6:
-                timeUntilNextState = 250;
+                timeUntilNextState = 100;
                 currentPresentationState =
                         (enum EPresentationState) ((int) currentPresentationState + 1);
                 break;

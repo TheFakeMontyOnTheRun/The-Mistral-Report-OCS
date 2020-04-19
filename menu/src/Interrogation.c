@@ -718,9 +718,10 @@ void Interrogation_initialPaintCallback() {
     fill(142, 144, 80, 8, 0, FALSE);
     fill(236, 144, 64, 8, 0, FALSE);
 
-    drawTextAt(3, 19, "Interrogation", 255);
-    drawTextAt(20, 19, "Emotions", 255);
-    drawTextAt(32, 19, "Stress", 255);
+    drawTextAt(3, 19, "Interrogation", 4);
+    drawTextAt(20, 19, "Emotions", 4);
+    drawTextAt(32, 19, "Stress", 4);
+
 
     fill(8 + 8, 144 + 8, 120, 48, 0, TRUE);
     fill(142 + 8, 144 + 8, 80, 48, 0, TRUE);

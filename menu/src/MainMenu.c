@@ -61,7 +61,7 @@ int32_t MainMenu_initStateCallback(int32_t tag, void *data) {
 }
 
 void MainMenu_initialPaintCallback() {
-    drawRepeatBitmap(0, 32, 320, 200, currentBackgroundBitmap);
+	drawRepeatBitmap(0, 0, 320, 200, currentBackgroundBitmap);
 }
 
 void MainMenu_repaintCallback(void) {
@@ -113,7 +113,7 @@ void MainMenu_repaintCallback(void) {
 
         drawTextAt(40 - biggestOption + 1 - 3,
                    (26 - kMainMenuOptionsCount) + c - 3,
-                   &MainMenu_options[c][0], isCursor ? 200 : 0);
+                   &MainMenu_options[c][0], 4);
     }
 
 }
@@ -128,7 +128,7 @@ int32_t MainMenu_tickCallback(int32_t tag, void *data) {
 
         switch (currentPresentationState) {
             case kAppearing:
-                timeUntilNextState = 250;
+                timeUntilNextState = 100;
                 currentPresentationState = kWaitingForInput;
                 break;
             case kWaitingForInput:
@@ -139,7 +139,7 @@ int32_t MainMenu_tickCallback(int32_t tag, void *data) {
             case kConfirmInputBlink4:
             case kConfirmInputBlink5:
             case kConfirmInputBlink6:
-                timeUntilNextState = 250;
+                timeUntilNextState = 100;
                 currentPresentationState =
                         (enum EPresentationState) ((int) currentPresentationState + 1);
                 break;
