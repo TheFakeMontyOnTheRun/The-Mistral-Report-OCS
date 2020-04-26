@@ -273,7 +273,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 }
 
                 /* loop */
-                e2 = err << 2;
+                e2 = err * 2;
 
                 if (e2 >= dy) {
                     err += dy; /* e_xy+e_x > 0 */
@@ -320,7 +320,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 }
 
                 /* loop */
-                e2 = err << 2;
+                e2 = err * 2;
 
                 if (e2 >= dy) {
                     err += dy; /* e_xy+e_x > 0 */
@@ -473,7 +473,7 @@ void drawCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ
                 }
 
                 /* loop */
-                e2 = err << 2;
+                e2 = err * 2;
 
                 if (e2 >= dy) {
                     err += dy; /* e_xy+e_x > 0 */
@@ -519,7 +519,7 @@ void drawCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ
                 }
 
                 /* loop */
-                e2 = err << 2;
+                e2 = err * 2;
 
                 if (e2 >= dy) {
                     err += dy; /* e_xy+e_x > 0 */
@@ -727,9 +727,9 @@ void Interrogation_initialPaintCallback() {
     fill(142 + 8, 144 + 8, 80, 48, 0, TRUE);
     fill(236 + 8, 144 + 8, 64, 48, 0, TRUE);
 
-    fill(8, 152, 120, 40, 255, FALSE);
-    fill(142, 152, 80, 40, 255, FALSE);
-    fill(236, 152, 64, 40, 255, FALSE);
+    fill(8, 152, 120, 40, 7, FALSE);
+    fill(142, 152, 80, 40, 7, FALSE);
+    fill(236, 152, 64, 40, 7, FALSE);
 
     drawRect(8, 152, 120, 40, 0);
     drawRect(142, 152, 80, 40, 0);
@@ -738,16 +738,15 @@ void Interrogation_initialPaintCallback() {
 }
 
 void Interrogation_repaintCallback() {
-    memset(stencilHigh, 0, 128);
+    memset(&stencilHigh[0], 0, 128);
 
     fill(255, 8, 8, 128, 0, TRUE);
     fill(0, 128, 256, 8, 0, TRUE);
 
-    fill(0, 0, 256, 128, 255, FALSE);
+    fill(0, 0, 256, 128, 7, FALSE);
 
     drawRect(0, 0, 256, 128, 0);
     fill(0, 0, 256, 8, 0, FALSE);
-
     renderScene();
 }
 

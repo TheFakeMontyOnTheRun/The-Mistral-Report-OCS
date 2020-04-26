@@ -109,14 +109,14 @@ void CreditsScreen_repaintCallback(void) {
         drawTextAt(1, 3, mainText, 0);
     }
 
-    fill(8, 128, 64, 64, 255, FALSE);
+    fill(8, 128, 64, 64, 7, FALSE);
     drawBitmap(8, 128, monty, TRUE);
     drawRect(8, 128, 64, 64, 0);
 
     fill(8, 128, 64, 8, 0, FALSE);
     drawTextAt(3, 17, "Monty", 4);
 
-    fill(152, 128, 64, 64, 255, FALSE);
+    fill(152, 128, 64, 64, 7, FALSE);
     drawBitmap(152, 128, belle, TRUE);
     drawRect(152, 128, 64, 64, 0);
 
