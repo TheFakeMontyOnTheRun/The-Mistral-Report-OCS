@@ -14,6 +14,14 @@
 #include "Engine.h"
 #include "FixP.h"
 
+struct Texture textures[TOTAL_TEXTURES];
+uint8_t usedTexture = 0;
+
+void clearTextures() {
+    usedTexture = 0;
+}
+
+
 FixP_t lerpFix(const FixP_t v0, const FixP_t v1, const FixP_t dt, const FixP_t total) {
     FixP_t delta = (v1 - v0);
     FixP_t progress = Div(dt, total);
@@ -107,6 +115,120 @@ struct Bitmap *loadBitmap(const char *__restrict__ filename) {
 
     return toReturn;
 }
+
+
+struct Texture *makeTextureFrom(const char *__restrict__ filename) {
+    struct Texture *toReturn;
+    uint8_t *diskBuffer;
+    uint8_t pixel;
+    uint8_t repetitions;
+    int c, d = 0;
+    size_t sizeInDisk = sizeOfFile(filename) - 4;
+    int pixelIndex = 0;
+    uint8_t buffer[NATIVE_TEXTURE_SIZE * NATIVE_TEXTURE_SIZE];
+    uint8_t dummy;
+
+    int x, y;
+    FILE *src = openBinaryFileFromPath(filename);
+
+    assert (fread(&dummy, 1, 1, src));
+    assert (fread(&dummy, 1, 1, src));
+    assert (fread(&dummy, 1, 1, src));
+    assert (fread(&dummy, 1, 1, src));
+
+#ifndef AGA5BPP
+    diskBuffer = (uint8_t *) calloc(1, sizeInDisk);
+    assert (fread(diskBuffer, sizeInDisk, 1, src));
+
+    for ( c = 0; c < sizeInDisk; c += 2 ) {
+        pixel = diskBuffer[ c ];
+        repetitions = diskBuffer[ c + 1 ];
+
+        for ( d = 0; d < repetitions; ++d ) {
+            buffer[ pixelIndex++ ] = pixel;
+        }
+    }
+    free(diskBuffer);
+#else
+    diskBuffer = (uint8_t *) calloc(1, sizeInDisk);
+	assert (fread(diskBuffer, sizeInDisk, 1, src));
+
+	for ( c = 0; c < sizeInDisk; c += 2 ) {
+		pixel = diskBuffer[ c ];
+		repetitions = diskBuffer[ c + 1 ];
+
+		uint8_t r	  = ( pixel & 192 ) >> 6;
+	  	uint8_t g	  = ( pixel & 56 ) >> 3;
+	  	uint8_t b	  = ( pixel & 7 );
+
+		for ( d = 0; d < repetitions; ++d ) {
+		  if ( pixel == 199 ) {
+				buffer[ pixelIndex++ ] = 199;
+			  } else {
+				buffer[ pixelIndex++ ] = getPaletteEntry(expandToARGB(pixel));
+			  }
+		}
+	}
+	free(diskBuffer);
+#endif
+
+    fclose(src);
+
+    toReturn = &textures[usedTexture++];
+
+    for (y = 0; y < NATIVE_TEXTURE_SIZE; ++y) {
+        uint8_t *sourceLine = &buffer[y * NATIVE_TEXTURE_SIZE];
+        uint8_t *dstLine = &toReturn->rotations[0][(y * NATIVE_TEXTURE_SIZE)];
+        for (x = 0; x < NATIVE_TEXTURE_SIZE; ++x) {
+            *dstLine = *sourceLine;
+            sourceLine++;
+            dstLine++;
+        }
+    }
+
+    for (y = (NATIVE_TEXTURE_SIZE - 1); y >= 0; --y) {
+        uint8_t *sourceLine = &buffer[(y * NATIVE_TEXTURE_SIZE) + (NATIVE_TEXTURE_SIZE - 1)];
+        uint8_t *dstLine = &toReturn->rotations[1][y];
+        for (x = (NATIVE_TEXTURE_SIZE - 1); x >= 0; --x) {
+            *dstLine = *sourceLine;
+            sourceLine--;
+            dstLine += NATIVE_TEXTURE_SIZE;
+        }
+    }
+
+    for (y = (NATIVE_TEXTURE_SIZE - 1); y >= 0; --y) {
+        uint8_t *sourceLine = &buffer[(y * NATIVE_TEXTURE_SIZE)];
+        uint8_t *dstLine = &toReturn->rotations[2][(((NATIVE_TEXTURE_SIZE - 1) - y) * NATIVE_TEXTURE_SIZE) + (NATIVE_TEXTURE_SIZE - 1)];
+        for (x = (NATIVE_TEXTURE_SIZE - 1); x >= 0; --x) {
+            *dstLine = *sourceLine;
+            sourceLine++;
+            dstLine--;
+        }
+    }
+
+    for (y = 0; y < NATIVE_TEXTURE_SIZE; ++y) {
+        uint8_t *sourceLine = &buffer[(((NATIVE_TEXTURE_SIZE - 1) - y) * NATIVE_TEXTURE_SIZE)];
+        uint8_t *dstLine = &toReturn->rotations[3][y];
+        for (x = 0; x < NATIVE_TEXTURE_SIZE; ++x) {
+            *dstLine = *sourceLine;
+            sourceLine++;
+            dstLine += NATIVE_TEXTURE_SIZE;
+        }
+    }
+
+    for (y = 0; y < NATIVE_TEXTURE_SIZE; ++y) {
+        uint8_t *sourceLine = &buffer[y * NATIVE_TEXTURE_SIZE];
+        uint8_t *dstLine = &toReturn->rowMajor[y];
+        for (x = 0; x < NATIVE_TEXTURE_SIZE; ++x) {
+            *dstLine = *sourceLine;
+            sourceLine++;
+            dstLine += NATIVE_TEXTURE_SIZE;
+        }
+    }
+
+    return toReturn;
+}
+
 
 void releaseBitmap(struct Bitmap *__restrict__ ptr) {
     assert (ptr != NULL);

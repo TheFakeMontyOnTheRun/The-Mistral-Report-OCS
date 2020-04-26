@@ -246,13 +246,15 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
         //https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 
         int dx = abs(x1 - x0);
-        int sx = x0 < x1 ? 1 : -1;
+        int8_t sx = x0 < x1 ? 1 : -1;
         int dy = -abs(y1 - y0);
-        int sy = y0 < y1 ? 1 : -1;
+        int8_t sy = y0 < y1 ? 1 : -1;
         int err = dx + dy;  /* error value e_xy */
-
+        uint8_t offset;
         while (1) {
-            framebuffer[(320 * y0) + (2 * x0)] = 0;
+            offset = (320 * y0) + (2 * x0);
+            framebuffer[offset] = 1;
+            framebuffer[offset + 1] = 1;
             /* loop */
             if (x0 == x1 && y0 == y1) return;
             int e2 = 2 * err;

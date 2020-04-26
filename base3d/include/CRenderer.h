@@ -59,4 +59,19 @@ void drawMask(const FixP_t x0,
               const FixP_t x1,
               const FixP_t y1);
 
+void drawWall(FixP_t x0,
+              FixP_t x1,
+              FixP_t x0y0,
+              FixP_t x0y1,
+              FixP_t x1y0,
+              FixP_t x1y1,
+              const uint8_t * __restrict__ texture,
+              const FixP_t textureScaleY,
+              const int z);
+
+#define distanceForPenumbra 16
+#define distanceForDarkness 32
+#define NATIVE_TEXTURE_SIZE 32
+#define TOTAL_TEXTURES 32
+
 #endif

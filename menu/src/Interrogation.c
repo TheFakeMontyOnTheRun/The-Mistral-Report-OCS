@@ -37,6 +37,10 @@ int8_t cameraX = 33;
 int8_t cameraZ = 22;
 int8_t cameraRotation = 0;
 
+void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 );
+
+struct Texture *montyTexture;
+
 struct Projection {
     uint8_t px;
     uint8_t py;
@@ -696,6 +700,7 @@ void renderScene() {
 int32_t Interrogation_initStateCallback(int32_t tag, void *data) {
 
     currentBackgroundBitmap = loadBitmap("pattern.img");
+    montyTexture = makeTextureFrom("montytex.img");
 
     timeUntilNextState = 10000 - 1;
 
@@ -712,7 +717,7 @@ int32_t Interrogation_initStateCallback(int32_t tag, void *data) {
 }
 
 void Interrogation_initialPaintCallback() {
-    drawRepeatBitmap(0, 32, 320, 200, currentBackgroundBitmap);
+    drawRepeatBitmap(0, 0, 320, 200, currentBackgroundBitmap);
 
     fill(8, 144, 120, 8, 0, FALSE);
     fill(142, 144, 80, 8, 0, FALSE);
@@ -748,6 +753,8 @@ void Interrogation_repaintCallback() {
     drawRect(0, 0, 256, 128, 0);
     fill(0, 0, 256, 8, 0, FALSE);
     renderScene();
+
+    drawWall(intToFix(16), intToFix(64), intToFix(32), intToFix(64), intToFix(16), intToFix(96), &montyTexture->rowMajor[0], intToFix(1), 1 );
 }
 
 int32_t Interrogation_tickCallback(int32_t tag, void *data) {

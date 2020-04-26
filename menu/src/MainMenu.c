@@ -62,13 +62,15 @@ int32_t MainMenu_initStateCallback(int32_t tag, void *data) {
 
 void MainMenu_initialPaintCallback() {
 	drawRepeatBitmap(0, 0, 320, 200, currentBackgroundBitmap);
+
+    drawImageWindow(2, 2, 21, 22, "Invisible affairs", logoBitmap);
 }
 
 void MainMenu_repaintCallback(void) {
     int16_t c;
 
     uint8_t optionsHeight = 8 * kMainMenuOptionsCount;
-
+/*
     if (currentPresentationState == kAppearing) {
         int invertedProgression = ((256 - (timeUntilNextState)) / 32) * 32;
         int size = lerpInt(0, 160, invertedProgression, 256);
@@ -91,8 +93,7 @@ void MainMenu_repaintCallback(void) {
                  sizeX, sizeY, 0);
         return;
     }
-
-    drawImageWindow(2, 2, 21, 22, "Invisible affairs", logoBitmap);
+*/
 
     drawWindow(40 - biggestOption - 3, 25 - 4 - (optionsHeight / 8), biggestOption + 2, (optionsHeight / 8) + 2,
                "Play Game");
