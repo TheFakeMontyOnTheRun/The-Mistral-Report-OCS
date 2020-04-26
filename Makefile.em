@@ -1,7 +1,7 @@
 CC = emcc
 CXX = em++
 
-LDFLAGS =  -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_SDL=1 -s --preload-file ./base.pfs --use-preload-plugins
+LDFLAGS =  -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_SDL=2 -s --preload-file ./base.pfs --use-preload-plugins
 
 CFLAGS=-g -c -O3 -std=c90    \
 	-Ibase3d/include                                     \
@@ -11,9 +11,7 @@ CFLAGS=-g -c -O3 -std=c90    \
 	-DSDLSW                                              \
 	-DVGA                                                \
 	-Wall                                                \
-	-Werror												 \
-	-ansi												 \
-	--pedantic                                           \
+	-fpermissive										\
 	-fomit-frame-pointer                                 \
 	-fno-exceptions                                      \
 	-ffast-math
@@ -24,7 +22,7 @@ MENU_OBJ=menu/src/MainMenu.o \
 	menu/src/Interrogation.o \
 	menu/src/UI.o \
 	menu/src/Main.o \
-	base3d/src/SDLVersion/SDL1Renderer.o \
+	base3d/src/SDLVersion/CSDL2Renderer.o \
 	base3d/src/Globals.o \
 	base3d/src/LoadBitmap.o \
 	base3d/src/CRenderer.o \

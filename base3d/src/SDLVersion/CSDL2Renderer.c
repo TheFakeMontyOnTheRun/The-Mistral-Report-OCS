@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
+#include <stdlib.h>
 
 #include "Common.h"
 #include "Enums.h"
@@ -10,6 +12,10 @@
 #include "CRenderer.h"
 
 #include "SDL.h"
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten/html5.h>
+#endif
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -125,6 +131,17 @@ void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y) {
 void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1 ) {
     fix_line(x0, y0, x0, y1);
 }
+
+#ifdef __EMSCRIPTEN__
+void enterFullScreenMode() {
+    EmscriptenFullscreenStrategy s;
+    memset(&s, 0, sizeof(s));
+    s.scaleMode = EMSCRIPTEN_FULLSCREEN_SCALE_ASPECT;
+    s.canvasResolutionScaleMode = EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_NONE;
+    s.filteringMode = EMSCRIPTEN_FULLSCREEN_FILTERING_DEFAULT;
+    emscripten_enter_soft_fullscreen(0, &s);
+}
+#endif
 
 
 void graphicsInit() {
