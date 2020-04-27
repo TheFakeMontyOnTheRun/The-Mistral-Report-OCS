@@ -10,11 +10,11 @@ extern enum ECommand mBufferedCommand;
 
 void graphicsInit();
 
-void graphicsPut(int x, int y );
+void graphicsPut(int x, int y, uint8_t pixel );
 
-void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y);
+void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y, uint8_t pixel);
 
-void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1);
+void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1, uint8_t pixel);
 
 void graphicsShutdown();
 
@@ -68,6 +68,25 @@ void drawWall(FixP_t x0,
               const uint8_t * __restrict__ texture,
               const FixP_t textureScaleY,
               const int z);
+
+void drawFrontWall(FixP_t x0,
+                   FixP_t y0,
+                   FixP_t x1,
+                   FixP_t y1,
+                   const uint8_t *  __restrict__  texture,
+                   const FixP_t textureScaleY,
+                   const int z,
+                   const int enableAlpha,
+                   const int size);
+
+void drawFloor(FixP_t y0,
+               FixP_t y1,
+               FixP_t x0y0,
+               FixP_t x1y0,
+               FixP_t x0y1,
+               FixP_t x1y1,
+               int z,
+               const uint8_t * __restrict__ texture);
 
 #define distanceForPenumbra 16
 #define distanceForDarkness 32

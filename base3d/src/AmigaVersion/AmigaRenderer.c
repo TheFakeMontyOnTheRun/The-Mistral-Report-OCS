@@ -183,13 +183,13 @@ static UWORD emptypointer[] = {
         0x0000, 0x0000    /* reserved, must be NULL */
 };
 
-void graphicsPut(int x, int y ) {
+void graphicsPut(int x, int y, uint8_t pixel ) {
     x = x * 2;
-    framebuffer[(320 * y) + x] = 0;
-    framebuffer[(320 * y) + x + 1] = 0;
+    framebuffer[(320 * y) + x] = pixel;
+    framebuffer[(320 * y) + x + 1] = pixel;
 }
 
-void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
+void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
 
     if (x0 == x1) {
 
@@ -207,7 +207,7 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
                 continue;
             }
 
-            graphicsPut(x0, y );
+            graphicsPut(x0, y, pixel );
         }
         return;
     }
@@ -226,7 +226,7 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
                 continue;
             }
 
-            graphicsPut(x, y0 );
+            graphicsPut(x, y0, pixel );
         }
         return;
     }
@@ -253,8 +253,8 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
         uint8_t offset;
         while (1) {
             offset = (320 * y0) + (2 * x0);
-            framebuffer[offset] = 1;
-            framebuffer[offset + 1] = 1;
+            framebuffer[offset] = pixel;
+            framebuffer[offset + 1] = pixel;
             /* loop */
             if (x0 == x1 && y0 == y1) return;
             int e2 = 2 * err;
@@ -273,12 +273,12 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 ) {
     }
 }
 
-void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y) {
-    fix_line(x0, y, x1, y);
+void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y, uint8_t pixel) {
+    fix_line(x0, y, x1, y, pixel);
 }
 
-void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1 ) {
-    fix_line(x0, y0, x0, y1);
+void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1, uint8_t pixel ) {
+    fix_line(x0, y0, x0, y1, pixel);
 }
 
 
