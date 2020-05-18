@@ -31,7 +31,6 @@ enum DIRECTION {
 
 #define IN_RANGE(V0, V1, V)  ((V0) <= (V) && (V) <= (V1))
 
-int8_t stencilLow[128];
 int8_t stencilHigh[128];
 
 int8_t cameraX = 33;
@@ -569,218 +568,6 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
     }
 }
 
-void drawLowCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ ) {
-
-    int8_t z1;
-    uint8_t z0px;
-    uint8_t z0py;
-    uint8_t z1px;
-    uint8_t z1py;
-    int8_t z0dx;
-    int8_t z1dx;
-
-    int16_t px0z0;
-    int8_t py0z0;
-    int16_t px1z0;
-    int8_t py1z0;
-    int8_t py1z1;
-    int16_t px0z1;
-    int8_t py0z1;
-    int16_t px1z1;
-
-    uint8_t drawContour;
-
-    if (z0 >= 32) {
-        z0 = 31;
-    }
-
-    z1 = z0 + dZ;
-
-    if (z1 >= 32) {
-        z1 = 31;
-    }
-
-
-    z0px = (projections[z0].px);
-    z1px = (projections[z1].px);
-    z0dx = ((projections[z0].dx));
-    z1dx = ((projections[z1].dx));
-
-    px0z0 = z0px - ((x0) * z0dx);
-    px0z1 = z1px - ((x0) * z1dx);
-
-    px1z0 = px0z0 - (dX * z0dx);
-    px1z1 = px0z1 - (dX * z1dx);
-
-    z1py = (projections[z1].py);
-    z0py = (projections[z0].py);
-
-    py0z0 = z0py + ((y0) * z0dx);
-    py1z0 = py0z0 + (dY * z0dx);
-    py0z1 = z1py + ((y0) * z1dx);
-    py1z1 = py0z1 + (dY * z1dx);
-
-    if (px1z0 < 0 || px0z0 > 127) {
-        return;
-    }
-
-    drawContour =  (dY);
-
-    {
-        int16_t x, x0, x1;
-
-        if (drawContour) {
-
-            if (IN_RANGE(0, 127, px0z0) && stencilLow[px0z0] > py1z0) {
-                graphicsVerticalLine(px0z0, py1z0, stencilLow[px0z0], 0);
-            }
-
-            if (IN_RANGE(0, 127, px1z0) && stencilLow[px1z0] > py1z0) {
-                graphicsVerticalLine(px1z0, py1z0, stencilLow[px1z0], 0);
-            }
-            if (IN_RANGE(0, 127, px0z1) && px0z1 < px0z0 && py1z1 < stencilLow[px0z1]) {
-                graphicsVerticalLine(px0z1, py1z1, stencilLow[px0z1], 0);
-            }
-
-            if (IN_RANGE(0, 127, px1z1) && px1z1 > px1z0 && py1z1 < stencilLow[px1z1]) {
-                graphicsVerticalLine(px1z1, py1z1, stencilLow[px1z1], 0);
-            }
-
-        }
-
-        /* Draw the horizontal outlines of z0 and z1 */
-
-        if (py1z0 < py1z1) {
-            /* Floor is higher than camera */
-            for (x = px0z0; x <= px1z0; ++x) {
-                if (IN_RANGE(0, 127, x) && stencilLow[x] > py1z0) {
-                    if (drawContour) {
-                        graphicsPut(x, py1z0, 0);
-                        graphicsPut(x, stencilLow[x], 0);
-                    }
-                    stencilLow[x] = py1z0;
-                }
-            }
-        } else if (drawContour) {
-            /* Floor is lower than the camera*/
-            /* Let's just draw the nearer segment */
-            for (x = px0z0; x <= px1z0; ++x) {
-                if (IN_RANGE(0, 127, x) && stencilLow[x] > py1z0) {
-                    graphicsPut(x, py1z0, 0);
-                    graphicsPut(x, stencilLow[x], 0);
-                }
-            }
-        }
-
-
-        /* The left segment */
-        x0 = px0z0;
-        x1 = px0z1;
-
-        if (x0 != x1) {
-            int16_t y0 = py1z0;
-            int16_t y1 = py1z1;
-            int16_t dx = abs(x1 - x0);
-            int16_t sx = x0 < x1 ? 1 : -1;
-            int16_t dy = -abs(y1 - y0);
-            int16_t sy = y0 < y1 ? 1 : -1;
-            int16_t err = dx + dy;  /* error value e_xy */
-            int16_t e2;
-
-            while ((x0 != x1 || y0 != y1)) {
-
-                if (IN_RANGE(0, 127, x0)) {
-                    if (stencilLow[x0] > y0) {
-                        if (drawContour) {
-                            graphicsPut(x0, y0, 0);
-                            graphicsPut(x0, stencilLow[x0], 0);
-                        }
-                        stencilLow[x0] = y0;
-                    }
-                }
-
-                /* loop */
-                e2 = err * 2;
-
-                if (e2 >= dy) {
-                    err += dy; /* e_xy+e_x > 0 */
-                    x0 += sx;
-                }
-
-                if (x0 >= 128) {
-                    goto right_stroke;
-                }
-
-                if (e2 <= dx) {
-                    /* e_xy+e_y < 0 */
-                    err += dx;
-                    y0 += sy;
-                }
-            }
-        }
-
-        right_stroke:
-
-        /* The right segment */
-        x0 = px1z0;
-        x1 = px1z1;
-
-        if (x0 != x1) {
-            int16_t y0 = py1z0;
-            int16_t y1 = py1z1;
-            int16_t dx = abs(x1 - x0);
-            int16_t sx = x0 < x1 ? 1 : -1;
-            int16_t dy = -abs(y1 - y0);
-            int16_t sy = y0 < y1 ? 1 : -1;
-            int16_t err = dx + dy;  /* error value e_xy */
-            int16_t e2;
-
-            while ((x0 != x1 || y0 != y1)) {
-
-                if (IN_RANGE(0, 127, x0) && stencilLow[x0] > y0) {
-                    if (drawContour) {
-                        graphicsPut(x0, y0, 0);
-                        graphicsPut(x0, stencilLow[x0], 0);
-                    }
-                    stencilLow[x0] = y0;
-                }
-
-                /* loop */
-                e2 = err * 2;
-
-                if (e2 >= dy) {
-                    err += dy; /* e_xy+e_x > 0 */
-                    x0 += sx;
-                }
-
-                if (x0 >= 128) {
-                    goto final_stroke;
-                }
-
-                if (e2 <= dx) {
-                    /* e_xy+e_y < 0 */
-                    err += dx;
-                    y0 += sy;
-                }
-            }
-        }
-
-        final_stroke:
-        if (py1z0 > py1z1) {
-            /* Floor is lower than the camera*/
-            /* Draw the last segment */
-
-            for (x = px0z1; x <= px1z1; ++x) {
-                if (IN_RANGE(0, 127, x) && stencilLow[x] > py1z1) {
-                    if (drawContour) {
-                        graphicsPut(x, py1z1, 0);
-                    }
-                    stencilLow[x] = py1z1;
-                }
-            }
-        }
-    }
-}
 
 void drawPattern(uint8_t pattern, uint8_t x0, uint8_t x1, uint8_t y) {
 
@@ -789,9 +576,6 @@ void drawPattern(uint8_t pattern, uint8_t x0, uint8_t x1, uint8_t y) {
     if (type == 0) {
         drawHighCubeAt(x0, patterns[pattern].ceiling, y, x1 - x0,
                        patterns[0].ceiling - patterns[pattern].ceiling, 1);
-
-        drawLowCubeAt(x0, patterns[0].floor, y, x1 - x0,
-                      patterns[pattern].floor - patterns[0].floor, 1);
 
     } else {
         switch( cameraRotation) {
@@ -937,7 +721,6 @@ int32_t Interrogation_initStateCallback(int32_t tag, void *data) {
 
 
     memset(&stencilHigh[0], 0, 128);
-    memset(&stencilLow[0], 127, 128);
 
     return 0;
 }
@@ -970,7 +753,6 @@ void Interrogation_initialPaintCallback() {
 
 void Interrogation_repaintCallback() {
     memset(&stencilHigh[0], 0, 128);
-    memset(&stencilLow[0], 127, 128);
 
     fill(255, 8, 8, 128, 0, TRUE);
     fill(0, 128, 256, 8, 0, TRUE);
