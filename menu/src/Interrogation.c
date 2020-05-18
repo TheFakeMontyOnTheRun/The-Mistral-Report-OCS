@@ -316,6 +316,9 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 if (IN_RANGE(0, 127, x0)) {
                     if (stencilHigh[x0] < y0) {
                         if (drawContour) {
+#ifdef FILLED_POLYS
+                            graphicsVerticalLine(x0, y0, stencilHigh[x0], 8);
+#endif
                             graphicsPut(x0, y0, 0);
                         }
                         stencilHigh[x0] = y0;
@@ -427,6 +430,9 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
             for (x = px0z0; x <= px1z0; ++x) {
                 if (IN_RANGE(0, 127, x) && stencilHigh[x] < py0z0) {
                     if (drawContour) {
+#ifdef FILLED_POLYS
+                        graphicsVerticalLine(x, py0z0, stencilHigh[x], 9);
+#endif
                         graphicsPut(x, py0z0, 0);
                         graphicsPut(x, stencilHigh[x], 0);
                     }
@@ -438,6 +444,9 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
             /* Let's just draw the nearer segment */
             for (x = px0z0; x <= px1z0; ++x) {
                 if (IN_RANGE(0, 127, x) && stencilHigh[x] < py0z0) {
+#ifdef FILLED_POLYS
+                    graphicsVerticalLine(x, py0z0, stencilHigh[x], 9);
+#endif
                     graphicsPut(x, py0z0, 0);
                     graphicsPut(x, stencilHigh[x], 0);
                 }
@@ -464,6 +473,9 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
                 if (IN_RANGE(0, 127, x0)) {
                     if (stencilHigh[x0] < y0) {
                         if (drawContour) {
+#ifdef FILLED_POLYS
+                            graphicsVerticalLine(x0, y0, stencilHigh[x0], 9);
+#endif
                             graphicsPut(x0, y0, 0);
                             graphicsPut(x0, stencilHigh[x0], 0);
                         }
@@ -511,6 +523,9 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
 
                 if (IN_RANGE(0, 127, x0) && stencilHigh[x0] < y0) {
                     if (drawContour) {
+#ifdef FILLED_POLYS
+                        graphicsVerticalLine(x0, y0, stencilHigh[x0], 9);
+#endif
                         graphicsPut(x0, y0, 0);
                         graphicsPut(x0, stencilHigh[x0], 0);
                     }
