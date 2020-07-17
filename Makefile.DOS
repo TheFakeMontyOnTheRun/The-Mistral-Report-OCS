@@ -35,7 +35,7 @@ CXXFLAGS=-c -O6 -Ofast      \
 
 MENU_TARGET=game.exe
 
-MENU_OBJ= menu/src/Main.o \
+MENU_OBJ= menu/src/Main.o menu/src/Engine.o \
 	  base3d/src/DOSVersion/DOSRenderer.o \
 	  base3d/src/LoadBitmap.o \
 	  base3d/src/CRenderer.o \

@@ -5,21 +5,13 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include "SpyTravel.h"
 #include "FixP.h"
-#include "Vec.h"
 #include "Enums.h"
-#include "CActor.h"
-#include "MapWithCharKey.h"
 #include "Common.h"
 #include "LoadBitmap.h"
 #include "Engine.h"
-#include "CTile3DProperties.h"
 #include "CRenderer.h"
-#include "VisibilityStrategy.h"
 #include "CPackedFileReader.h"
-
-char textBuffer[40 * 25];
 
 InitStateCallback initStateCallback = NULL;
 InitialPaintCallback initialPaintCallback = NULL;
@@ -29,12 +21,14 @@ UnloadStateCallback unloadStateCallback = NULL;
 
 extern long timeUntilNextState;
 extern enum EPresentationState currentPresentationState;
-extern const char *mainText;
 extern int32_t currentGameMenuState;
+
+char textBuffer[40 * 25];
+extern const char *mainText;
 
 int countLines() {
     int len = strlen(mainText);
-    int lines = 2; //initial line + final line must be accounted for
+    int lines = 2; /* initial line + final line must be accounted for */
     int charsInLine = 0;
     int c = 0;
     for (c = 0; c < len; ++c) {
@@ -45,22 +39,22 @@ int countLines() {
             charsInLine++;
         }
     }
-
+    
     return lines - 1;
 }
 
-void enterState(int newState) {
-
+void enterState(enum EGameMenuState newState) {
+    
     if (unloadStateCallback != NULL) {
         unloadStateCallback();
     }
-
+    
     timeUntilNextState = MENU_ITEM_TIME_TO_BECOME_ACTIVE_MS;
     currentPresentationState = kAppearing;
     currentBackgroundBitmap = NULL;
     cursorPosition = 0;
     nextNavigationSelection = -1;
-
+    
     switch (newState) {
         default:
         case kMainMenu:
@@ -84,85 +78,8 @@ void enterState(int newState) {
             tickCallback = CreditsScreen_tickCallback;
             unloadStateCallback = CreditsScreen_unloadStateCallback;
             break;
-        case kPassTurn: {
-            if (mapGameTick() == -1) {
-                enterState(kGameOver);
-            } else {
-                enterState(kGameMenu);
-            }
-            return;
-        } /* this has to fall thru to kPlayGame, so we continue playing */
-            break;
-        case kPlayGame:
-            initSpyGame();
-        case kGameMenu:
-            menuStateToReturn = kGameMenu;
-
-        case kTravelPorto:
-        case kTravelLisbon:
-        case kTravelMadrid:
-        case kTravelBarcelona:
-        case kTravelFrankfurt:
-        case kTravelHamburg:
-        case kTravelLuxembourg:
-        case kTravelBrussels:
-            newState = kGameMenu;
-        case kStatusMenu:
-        case kTravelMenu:
-        case kDossiersMenu:
-        case kAccuseMenu:
-        case kReadDossier_Sofia:
-        case kReadDossier_Ricardo:
-        case kReadDossier_Lola:
-        case kReadDossier_Pau:
-        case kReadDossier_Lina:
-        case kReadDossier_Elias:
-        case kReadDossier_Carmen:
-        case kVictory:
-        case kGameOver:
-        case kEpilogue:
-        case kReadDossier_Jean:
-            initStateCallback = GameMenu_initStateCallback;
-            initialPaintCallback = GameMenu_initialPaintCallback;
-            repaintCallback = GameMenu_repaintCallback;
-            tickCallback = GameMenu_tickCallback;
-            unloadStateCallback = GameMenu_unloadStateCallback;
-            break;
-
-        case kAccuse_Sofia:
-        case kAccuse_Ricardo:
-        case kAccuse_Lola:
-        case kAccuse_Pau:
-        case kAccuse_Lina:
-        case kAccuse_Elias:
-        case kAccuse_Carmen:
-        case kAccuse_Jean:
-            if (accuse(newState - kAccuse_Sofia) /*&& isBanditPresent()*/ ) {
-                enterState(kVictory);
-                return;
-            } else {
-                enterState(kGameOver);
-                return;
-            }
-        case kPracticeCrawling:
-            initSpyGame();
-        case kPrologue:
-            menuStateToReturn = kMainMenu;
-            initStateCallback = Crawler_initStateCallback;
-            initialPaintCallback = Crawler_initialPaintCallback;
-            repaintCallback = Crawler_repaintCallback;
-            tickCallback = Crawler_tickCallback;
-            unloadStateCallback = Crawler_unloadStateCallback;
-            break;
-        case kPracticeInterrogation:
+            
         case kInterrogate_Sofia:
-        case kInterrogate_Ricardo:
-        case kInterrogate_Lola:
-        case kInterrogate_Pau:
-        case kInterrogate_Lina:
-        case kInterrogate_Jean:
-        case kInterrogate_Elias:
-        case kInterrogate_Carmen:
             menuStateToReturn = kMainMenu;
             initStateCallback = Interrogation_initStateCallback;
             initialPaintCallback = Interrogation_initialPaintCallback;
@@ -170,36 +87,11 @@ void enterState(int newState) {
             tickCallback = Interrogation_tickCallback;
             unloadStateCallback = Interrogation_unloadStateCallback;
             break;
-
-        case kInvestigateMenu: {
-
-            if (isSuspectAlive() && hasGivenClue(getPlayerLocation())) {
-                getClue();
-                enterState(kReadDossier_Sofia + getPlayerLocation());
-                return;
-            }
-
-            menuStateToReturn = kMainMenu;
-            initStateCallback = Crawler_initStateCallback;
-            initialPaintCallback = Crawler_initialPaintCallback;
-            repaintCallback = Crawler_repaintCallback;
-            tickCallback = Crawler_tickCallback;
-            unloadStateCallback = Crawler_unloadStateCallback;
-        }
-            break;
         case kQuit:
             isRunning = FALSE;
             break;
-        case kEndGame:
-            menuStateToReturn = kGameMenu;
-            initStateCallback = GameMenu_initStateCallback;
-            initialPaintCallback = GameMenu_initialPaintCallback;
-            repaintCallback = GameMenu_repaintCallback;
-            tickCallback = GameMenu_tickCallback;
-            unloadStateCallback = GameMenu_unloadStateCallback;
-            break;
     }
-
+    
     currentGameMenuState = newState;
     initStateCallback(newState, NULL);
     initialPaintCallback();
@@ -215,7 +107,7 @@ int menuTick(long delta_time) {
     handleSystemEvents();
 
     if (soundDriver != kNoSound) {
-        soundTick();
+ //       soundTick();
     }
 
     /* protect against machines too fast for their own good. */
@@ -232,7 +124,7 @@ int menuTick(long delta_time) {
     }
 
     if (newState != currentGameMenuState && newState != -1) {
-        playSound(STATE_CHANGE_SOUND);
+   //     playSound(STATE_CHANGE_SOUND);
         enterState(newState);
     }
 
@@ -240,4 +132,45 @@ int menuTick(long delta_time) {
     flipRenderer();
 
     return TRUE;
+}
+
+int start_clock, end_clock, prev;
+
+void mainLoop() {
+    long now, delta_time;
+    enum ECommand input;
+    int32_t newState;
+    
+    handleSystemEvents();
+    
+#ifdef AMIGA
+#ifdef AGA8BPP
+    delta_time = 50;
+#else
+    delta_time = 50;
+#endif
+#else
+    
+    
+#ifdef ANDROID
+	delta_time = 50;
+#endif
+#ifdef __EMSCRIPTEN__
+    delta_time = 500;
+#endif
+#endif
+	input = getInput();
+	newState = tickCallback(input, &delta_time);
+    
+    if (input == kCommandQuit) {
+        isRunning = FALSE;
+    }
+    
+    if (newState != currentGameMenuState && newState != -1) {
+        enterState(newState);
+    }
+    
+    repaintCallback();
+    flipRenderer();
+
 }
