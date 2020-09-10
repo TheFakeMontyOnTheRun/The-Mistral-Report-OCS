@@ -255,41 +255,41 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
         x1 = px1z1;
 
         if (x0 != x1) {
-            int16_t y0 = py1z0;
-            int16_t y1 = py1z1;
-            int16_t dx = abs(x1 - x0);
-            int16_t sx = x0 < x1 ? 1 : -1;
-            int16_t dy = -abs(y1 - y0);
-            int16_t sy = y0 < y1 ? 1 : -1;
-            int16_t err = dx + dy;  /* error value e_xy */
-            int16_t e2;
+            int16_t upperY0 = py1z0;
+            int16_t upperY1 = py1z1;
+            int16_t upperDx = abs(x1 - x0);
+            int16_t upperSx = x0 < x1 ? 1 : -1;
+            int16_t upperDy = -abs(upperY1 - upperY0);
+            int16_t upperSy = upperY0 < upperY1 ? 1 : -1;
+            int16_t upperErr = upperDx + upperDy;  /* error value e_xy */
+            int16_t upperErr2;
 
-            while ((x0 != x1 || y0 != y1)) {
+            while ((x0 != x1 || upperY0 != upperY1)) {
 
                 if (IN_RANGE(0, 127, x0)) {
-                    if (stencilHigh[x0] <= y0) {
+                    if (stencilHigh[x0] <= upperY0) {
                         if (drawContour) {
-                            graphicsPut (x0, y0, 0);
+                            graphicsPut (x0, upperY0, 0);
                         }
                     }
                 }
 
                 /* loop */
-                e2 = err * 2;
+                upperErr2 = upperErr * 2;
 
-                if (e2 >= dy) {
-                    err += dy; /* e_xy+e_x > 0 */
-                    x0 += sx;
+                if (upperErr2 >= upperDy) {
+                    upperErr += upperDy; /* e_xy+e_x > 0 */
+                    x0 += upperSx;
                 }
 
                 if (x0 >= 128) {
                     goto done_upper_stroke;
                 }
 
-                if (e2 <= dx) {
+                if (upperErr2 <= upperDx) {
                     /* e_xy+e_y < 0 */
-                    err += dx;
-                    y0 += sy;
+                    upperErr += upperDx;
+                    upperY0 += upperSy;
                 }
             }
         }
@@ -301,45 +301,45 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
         x1 = px1z1;
 
         if (x0 != x1) {
-            int16_t y0 = py0z0;
-            int16_t y1 = py0z1;
-            int16_t dx = abs(x1 - x0);
-            int16_t sx = x0 < x1 ? 1 : -1;
-            int16_t dy = -abs(y1 - y0);
-            int16_t sy = y0 < y1 ? 1 : -1;
-            int16_t err = dx + dy;  /* error value e_xy */
-            int16_t e2;
+            int16_t lowerY0 = py0z0;
+            int16_t lowerY1 = py0z1;
+            int16_t lowerDx = abs(x1 - x0);
+            int16_t lowerSx = x0 < x1 ? 1 : -1;
+            int16_t lowerDy = -abs(lowerY1 - lowerY0);
+            int16_t lowerSy = lowerY0 < lowerY1 ? 1 : -1;
+            int16_t lowerErr = lowerDx + lowerDy;  /* error value e_xy */
+            int16_t lowerErr2;
 
-            while ((x0 != x1 || y0 != y1)) {
+            while ((x0 != x1 || lowerY0 != lowerY1)) {
 
                 if (IN_RANGE(0, 127, x0)) {
-                    if (stencilHigh[x0] < y0) {
+                    if (stencilHigh[x0] < lowerY0) {
                         if (drawContour) {
 #ifdef FILLED_POLYS
-                            graphicsVerticalLine(x0, y0, stencilHigh[x0], 8);
+                            //graphicsVerticalLine(x0, y0, stencilHigh[x0], 8);
 #endif
-                            graphicsPut(x0, y0, 0);
+                            graphicsPut(x0, lowerY0, 0);
                         }
-                        stencilHigh[x0] = y0;
+                        stencilHigh[x0] = lowerY0;
                     }
                 }
 
                 /* loop */
-                e2 = err * 2;
+                lowerErr2 = lowerErr * 2;
 
-                if (e2 >= dy) {
-                    err += dy; /* e_xy+e_x > 0 */
-                    x0 += sx;
+                if (lowerErr2 >= lowerDy) {
+                    lowerErr += lowerDy; /* e_xy+e_x > 0 */
+                    x0 += lowerSx;
                 }
 
                 if (x0 >= 128) {
                     return;
                 }
 
-                if (e2 <= dx) {
+                if (lowerErr2 <= lowerDx) {
                     /* e_xy+e_y < 0 */
-                    err += dx;
-                    y0 += sy;
+                    lowerErr += lowerDx;
+                    lowerY0 += lowerSy;
                 }
             }
         }
