@@ -29,6 +29,13 @@ enum DIRECTION {
     DIRECTION_W
 };
 
+const char *options[4] = {
+    "Option 1",
+    "Option 2",
+    "Option 3",
+    "Option 4",
+};
+
 #define IN_RANGE(V0, V1, V)  ((V0) <= (V) && (V) <= (V1))
 
 int8_t stencilHigh[128];
@@ -36,6 +43,7 @@ int8_t stencilHigh[128];
 int8_t cameraX = 33;
 int8_t cameraZ = 22;
 int8_t cameraRotation = 0;
+int8_t viewMenu;
 
 void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 );
 
@@ -727,10 +735,9 @@ int32_t Interrogation_initStateCallback(int32_t tag, void *data) {
     cameraX = 5;
     cameraZ = 15;
     cameraRotation = 0;
-
+    viewMenu = -1;
 
     memset(&stencilHigh[0], 0, 128);
-
     return 0;
 }
 
@@ -765,6 +772,12 @@ void Interrogation_initialPaintCallback() {
 }
 
 void Interrogation_repaintCallback() {
+    
+//    if ( nextDirtyLineY1 < dirtyLineY1 ) {
+//        dirtyLineY1 = nextDirtyLineY1;
+//    } else {
+//        lastDirtyLineY1 = dirtyLineY1 = 128;
+//    }
     memset(&stencilHigh[0], 0, 128);
 
     fill(255, 8, 8, 128, 0, TRUE);
