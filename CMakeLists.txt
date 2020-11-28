@@ -24,6 +24,7 @@ add_executable(mistral-ocs
         menu/src/HelpScreen.c
 		menu/src/CreditsScreen.c
         menu/src/Main.c
+		menu/src/Engine.c
 		base3d/src/SDLVersion/CSDL2Renderer.c
 		base3d/src/Globals.c
 		base3d/src/LoadBitmap.c
