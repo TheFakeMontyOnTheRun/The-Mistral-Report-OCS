@@ -11,6 +11,7 @@
 #include "CRenderer.h"
 
 uint16_t clippingY1 = 200;
+extern int8_t stencilHigh[128];
 
 /*
     *         /|x1y0
@@ -169,7 +170,7 @@ void drawWall(FixP_t x0,
     FixP_t dX;
     FixP_t upperDyDx;
     FixP_t lowerDyDx;
-    uint8_t pixel = 0;
+    uint8_t pixel = 3;
     FixP_t u = 0;
     uint8_t lastV;
     const uint8_t *data = texture;
@@ -225,27 +226,18 @@ void drawWall(FixP_t x0,
     dX = intToFix(limit - x);
     upperDyDx = Div(upperDy, dX);
     lowerDyDx = Div(lowerDy, dX);
-
-    u = 0;
-    /*
-       0xFF here acts as a dirty value, indicating there is no last value.
-       But even if we had textures this big, it would be only at the end of
-       the run.
-      we can use this statically, since the textures are already loaded.
-      we don't need to fetch that data on every run.
-   */
-
     du = Div(textureSize, dX);
+    u = 0;
     ix = x;
 
     for (; ix < limit; ++ix) {
         if (ix >= 0 && ix < 256) {
-
             const FixP_t diffY = (y1 - y0);
             FixP_t v = 0;
             int32_t iu = fixToInt(u);
             int32_t iY0 = fixToInt(y0);
             int32_t iY1 = fixToInt(y1);
+            int halfX = ix >> 1;
             const uint8_t *sourceLineStart = data + (iu * textureWidth);
             const uint8_t *lineOffset = sourceLineStart;
             uint8_t *destinationLine = bufferData + (320 * iY0) + ix;
@@ -255,15 +247,13 @@ void drawWall(FixP_t x0,
             if (diffY == zero) {
                 continue;
             }
-
             dv = Div(Mul(textureSize, textureScaleY), diffY);
-
             lastV = 0;
             pixel = *(lineOffset);
 
             for (iy = iY0; iy < iY1; ++iy) {
 
-                if (iy < 128 && iy >= 0) {
+                if (iy < 128 && iy >= 0 && iy > stencilHigh[halfX]) {
                     const int32_t iv = fixToInt(v);
                     int stipple = !((ix + iy) & 1);
 
@@ -274,20 +264,27 @@ void drawWall(FixP_t x0,
                         lastV = iv;
                     }
 
-                    if (pixel != TRANSPARENCY_COLOR) {
-                        uint8_t color = pixel;
+                    uint8_t color = pixel;
 
-                        if ( farForStipple && stipple) {
-                            color = 0;
-                        }
-
-                        *(destinationLine) = color;
+                    if ( farForStipple && stipple) {
+                        color = 0;
                     }
+
+                    *(destinationLine) = color;
                 }
                 destinationLine += (320);
                 v += dv;
             }
+            
+            if (iy >= 0 && iy > stencilHigh[halfX] && (ix & 1)) {
+                if (iy > 127 ) {
+                    stencilHigh[halfX] = 127;
+                } else {
+                    stencilHigh[halfX] = iy;
+                }
+            }
         }
+        
         y0 += upperDyDx;
         y1 += lowerDyDx;
         u += du;
@@ -347,26 +344,23 @@ void drawFrontWall(FixP_t x0,
                    const uint8_t *  __restrict__  texture,
                    const FixP_t textureScaleY,
                    const int z,
-                   const int enableAlpha,
-                   const int size) {
+                   const int enableAlpha) {
     int16_t y;
     int limit;
     FixP_t dY;
-    uint8_t pixel = 0;
+    uint8_t pixel = 4;
+    int32_t iy;
     FixP_t v = 0;
+    FixP_t du;
     uint8_t lastU;
     uint8_t lastV = 0xFF;
-    int32_t iy;
     const uint8_t *data = texture;
-    const uint16_t textureWidth = size;
-    const uint16_t textureHeight = size;
-    const FixP_t textureSize = intToFix(textureWidth);
-    const FixP_t texWidth = intToFix(textureWidth);
+    const FixP_t textureSize = intToFix(32);
+    const FixP_t texWidth = intToFix(32);
     FixP_t dv;
     FixP_t diffX;
     int iX0;
     int iX1;
-    FixP_t du;
     uint8_t *bufferData = &framebuffer[0];
     int farEnoughForStipple = (z >= distanceForPenumbra);
 
@@ -414,11 +408,10 @@ void drawFrontWall(FixP_t x0,
     du = Div(texWidth + intToFix(2), diffX);
 
     for (; iy < limit; ++iy) {
-
-        if (iy < 128 && iy >= 0) {
+        if (iy < 128 && iy >= 0 ) {
             FixP_t u = 0;
-            const uint8_t iv = fixToInt(v) % textureHeight;
-            const uint8_t *sourceLineStart = data + (iv * textureHeight);
+            const uint8_t iv = fixToInt(v) & 31;
+            const uint8_t *sourceLineStart = data + (iv * 32);
             uint8_t *destinationLine = bufferData + (320 * iy) + iX0;
             int ix;
             lastU = 0;
@@ -433,7 +426,6 @@ void drawFrontWall(FixP_t x0,
                 sourceLineStart = destinationLine - 320;
                 memcpy (destinationLine + start, sourceLineStart + start,
                         finish - start);
-
                 continue;
             }
 
@@ -441,14 +433,10 @@ void drawFrontWall(FixP_t x0,
 
             for (ix = iX0; ix < iX1; ++ix) {
 
-                if (ix < 256 && ix >= 0) {
+                if (ix < 256 && ix >= 0 && iy > stencilHigh[ix >> 1] ) {
                     int stipple = ((ix + iy) & 1);
-                    const uint8_t iu = fixToInt(u) % textureWidth;
-                    /*
-                                  only fetch the next texel if we really changed the
-                                  u, v coordinates (otherwise, would fetch the same
-                                  thing anyway)
-                                   */
+                    const uint8_t iu = fixToInt(u) & 31;
+
                     if (iu != lastU
                         && !( stipple && farEnoughForStipple)) {
 
@@ -457,23 +445,46 @@ void drawFrontWall(FixP_t x0,
                         lastU = iu;
                         lastV = iv;
                     }
+                    
+                    uint8_t color = pixel;
 
-                    if (pixel != TRANSPARENCY_COLOR) {
-
-                        uint8_t color = pixel;
-
-                        if ( farEnoughForStipple && stipple) {
-                            color = 0;
-                        }
-
-                        *(destinationLine) = color;
+                    if ( farEnoughForStipple && stipple) {
+                        color = 0;
                     }
+
+                    *(destinationLine) = color;
                 }
                 ++destinationLine;
                 u += du;
             }
         }
         v += dv;
+    }
+    
+    
+    if (iX0 < 0 ) {
+        iX0 = 0;
+    }
+    
+    if (iX0 >= 256 ) {
+        iX0 = 255;
+    }
+
+    if (iX1 < 0 ) {
+        iX1 = 0;
+    }
+    
+    if (iX1 >= 256 ) {
+        iX1 = 255;
+    }
+    
+    iX0 = iX0 / 2;
+    iX1 = iX1 / 2;
+
+    for (int ix = iX0; ix < iX1; ++ix) {
+        if (iy > stencilHigh[ix] ) {
+            stencilHigh[ix] = iy;
+        }
     }
 }
 

@@ -42,7 +42,8 @@ int32_t HelpScreen_initStateCallback(int32_t tag, void *data) {
     fclose(fileInput);
 
     HelpScreen_optionsCount = 1;
-
+    dirtyLineY0 = 0;
+    dirtyLineY1 = 200;
     return 0;
 }
 

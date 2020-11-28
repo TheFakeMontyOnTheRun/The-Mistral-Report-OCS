@@ -245,7 +245,7 @@ void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1, uint8_t pixel ) {
 
 
 void flipRenderer() {
-    dosmemput(&framebuffer[0], 320 * 200, 0xa0000);
+    dosmemput(&framebuffer[dirtyLineY0 * 320], 320 * 200, 0xa0000 + (dirtyLineY0 * 320));
 }
 
 void clear() {}

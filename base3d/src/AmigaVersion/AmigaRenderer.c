@@ -220,52 +220,14 @@ static UWORD emptypointer[] = {
 };
 
 void graphicsPut(int x, int y, uint8_t pixel ) {
-    x = x * 2;
-    framebuffer[(320 * y) + x] = pixel;
-    framebuffer[(320 * y) + x + 1] = pixel;
+    int offset = (320 * y) + (x << 1);
+    uint8_t *ptr = &framebuffer[offset];
+    *ptr = pixel;
+    ++ptr;
+    *ptr = pixel;
 }
 
 void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
-
-    if (x0 == x1) {
-
-        int16_t _y0 = y0;
-        int16_t _y1 = y1;
-
-        if (y0 > y1) {
-            _y0 = y1;
-            _y1 = y0;
-        }
-
-
-        for (int16_t y = _y0; y <= _y1; ++y) {
-            if (x0 < 0 || x0 >= 256 || y < 0 || y >= 128) {
-                continue;
-            }
-
-            graphicsPut(x0, y, pixel );
-        }
-        return;
-    }
-
-    if (y0 == y1) {
-        int16_t _x0 = x0;
-        int16_t _x1 = x1;
-
-        if (x0 > x1) {
-            _x0 = x1;
-            _x1 = x0;
-        }
-
-        for (int16_t x = _x0; x <= _x1; ++x) {
-            if (x < 0 || x >= 256 || y0 < 0 || y0 >= 128) {
-                continue;
-            }
-
-            graphicsPut(x, y0, pixel );
-        }
-        return;
-    }
 
     //switching x0 with x1
     if (x0 > x1) {
@@ -288,9 +250,11 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
         int err = dx + dy;  /* error value e_xy */
         uint8_t offset;
         while (1) {
+            
             offset = (320 * y0) + (2 * x0);
             framebuffer[offset] = pixel;
             framebuffer[offset + 1] = pixel;
+            
             /* loop */
             if (x0 == x1 && y0 == y1) return;
             int e2 = 2 * err;
@@ -310,11 +274,72 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
 }
 
 void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y, uint8_t pixel) {
-    fix_line(x0, y, x1, y, pixel);
+    int offset;
+    uint8_t *ptr;
+    int16_t _x0 = x0;
+    int16_t _x1 = x1;
+
+    
+    
+    if (x0 > x1) {
+        _x0 = x1;
+        _x1 = x0;
+    }
+    
+    if (_x0 >= 128 || _x1 < 0 ) {
+        return;
+    }
+    
+    if ( _x0 < 0 ) {
+        _x0 = 0;
+    }
+    
+    if ( _x1 >= 128 ) {
+        _x0 = 127;
+    }
+    
+    offset = (320 * y) + (_x0 << 1);
+    ptr = &framebuffer[offset];
+    
+    memset( ptr, pixel, (_x1 - _x0 ) * 2 );
 }
 
 void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1, uint8_t pixel ) {
-    fix_line(x0, y0, x0, y1, pixel);
+    int offset;
+    uint8_t *ptr;
+    int16_t _y0 = y0;
+    int16_t _y1 = y1;
+    
+    if (x0 < 0 || x0 >= 256 ) {
+        return;
+    }
+    
+    if (y0 > y1) {
+        _y0 = y1;
+        _y1 = y0;
+    }
+    
+    if ( _y0 >= 128 || _y1 < 0 ) {
+        return;
+    }
+    
+    if ( _y0 < 0) {
+        _y0 = 0;
+    }
+    
+    if ( _y1 >= 128) {
+        _y1 = 127;
+    }
+    
+    offset = (320 * _y0) + (x0 << 1);
+    ptr = &framebuffer[offset];
+    
+    for (int16_t y = _y0; y <= _y1; ++y) {
+        *ptr = pixel;
+        ++ptr;
+        *ptr = pixel;
+        ptr += 319;
+    }
 }
 
 
@@ -447,13 +472,13 @@ int xlate_key(UWORD rawkey, UWORD qualifier, APTR eventptr) {
             if (c >= '0' && c <= '9')       /* numeric pad */
                 switch (c) {
                     case '4':
-                        mBufferedCommand = kCommandLeft;
+                        mBufferedCommand = kCommandStrafeLeft;
                         break;
                     case '5':
                         mBufferedCommand = kCommandDown;
                         break;
                     case '6':
-                        mBufferedCommand = kCommandRight;
+                        mBufferedCommand = kCommandStrafeRight;
                         break;
                     case '8':
                         mBufferedCommand = kCommandUp;
@@ -469,10 +494,10 @@ int xlate_key(UWORD rawkey, UWORD qualifier, APTR eventptr) {
                 mBufferedCommand = kCommandDown;
                 break;
             case 0x4E:
-                mBufferedCommand = kCommandRight;
+                mBufferedCommand = kCommandStrafeRight;
                 break;
             case 0x4F:
-                mBufferedCommand = kCommandLeft;
+                mBufferedCommand = kCommandStrafeLeft;
                 break;
             case 96:
             case 97:
@@ -526,11 +551,11 @@ void handleSystemEvents() {
                     break;
 
                 case 'b':
-                    mBufferedCommand = kCommandLeft;
+                    mBufferedCommand = kCommandStrafeLeft;
                     break;
 
                 case 'm':
-                    mBufferedCommand = kCommandRight;
+                    mBufferedCommand = kCommandStrafeRight;
                     break;
 
                 case 'h':
@@ -582,6 +607,6 @@ void flipRenderer() {
     DisownBlitter();
 #endif
 #else
-    WriteChunkyPixels(my_window->RPort, 0, 0, 319, 199, &framebuffer[0], 320);
+    WriteChunkyPixels(my_window->RPort, 0, 0, 256, 128, &framebuffer[0], 320);
 #endif
 }

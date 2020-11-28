@@ -87,53 +87,16 @@ void muteSound() {}
     [self setNeedsDisplay: YES ];
 }
 
+
 void graphicsPut(int x, int y, uint8_t pixel ) {
-    x = x * 2;
-    framebuffer[(320 * y) + x] = pixel;
-    framebuffer[(320 * y) + x + 1] = pixel;
+    int offset = (320 * y) + (x << 1);
+    uint8_t *ptr = &framebuffer[offset];
+    *ptr = pixel;
+    ++ptr;
+    *ptr = pixel;
 }
 
 void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
-    
-    if (x0 == x1) {
-        
-        int16_t _y0 = y0;
-        int16_t _y1 = y1;
-        
-        if (y0 > y1) {
-            _y0 = y1;
-            _y1 = y0;
-        }
-        
-        
-        for (int16_t y = _y0; y <= _y1; ++y) {
-            if (x0 < 0 || x0 >= 256 || y < 0 || y >= 128) {
-                continue;
-            }
-            
-            graphicsPut(x0, y, pixel );
-        }
-        return;
-    }
-    
-    if (y0 == y1) {
-        int16_t _x0 = x0;
-        int16_t _x1 = x1;
-        
-        if (x0 > x1) {
-            _x0 = x1;
-            _x1 = x0;
-        }
-        
-        for (int16_t x = _x0; x <= _x1; ++x) {
-            if (x < 0 || x >= 256 || y0 < 0 || y0 >= 128) {
-                continue;
-            }
-            
-            graphicsPut(x, y0, pixel );
-        }
-        return;
-    }
     
     //switching x0 with x1
     if (x0 > x1) {
@@ -150,13 +113,17 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
         //https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
         
         int dx = abs(x1 - x0);
-        int sx = x0 < x1 ? 1 : -1;
+        int8_t sx = x0 < x1 ? 1 : -1;
         int dy = -abs(y1 - y0);
-        int sy = y0 < y1 ? 1 : -1;
+        int8_t sy = y0 < y1 ? 1 : -1;
         int err = dx + dy;  /* error value e_xy */
-        
+        uint8_t offset;
         while (1) {
-            framebuffer[(320 * y0) + (2 * x0)] = pixel;
+            
+            offset = (320 * y0) + (2 * x0);
+            framebuffer[offset] = pixel;
+            framebuffer[offset + 1] = pixel;
+            
             /* loop */
             if (x0 == x1 && y0 == y1) return;
             int e2 = 2 * err;
@@ -175,14 +142,75 @@ void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t pixel ) {
     }
 }
 
-
 void graphicsHorizontalLine(int16_t x0, int16_t x1, int16_t y, uint8_t pixel) {
-    fix_line(x0, y, x1, y, pixel);
+    int offset;
+    uint8_t *ptr;
+    int16_t _x0 = x0;
+    int16_t _x1 = x1;
+    
+    
+    
+    if (x0 > x1) {
+        _x0 = x1;
+        _x1 = x0;
+    }
+    
+    if (_x0 >= 128 || _x1 < 0 ) {
+        return;
+    }
+    
+    if ( _x0 < 0 ) {
+        _x0 = 0;
+    }
+    
+    if ( _x1 >= 128 ) {
+        _x0 = 127;
+    }
+    
+    offset = (320 * y) + (_x0 << 1);
+    ptr = &framebuffer[offset];
+    
+    memset( ptr, pixel, (_x1 - _x0 ) * 2 );
 }
 
 void graphicsVerticalLine(int16_t x0, int16_t y0, int16_t y1, uint8_t pixel ) {
-    fix_line(x0, y0, x0, y1, pixel);
+    int offset;
+    uint8_t *ptr;
+    int16_t _y0 = y0;
+    int16_t _y1 = y1;
+    
+    if (x0 < 0 || x0 >= 256 ) {
+        return;
+    }
+    
+    if (y0 > y1) {
+        _y0 = y1;
+        _y1 = y0;
+    }
+    
+    if ( _y0 >= 128 || _y1 < 0 ) {
+        return;
+    }
+    
+    if ( _y0 < 0) {
+        _y0 = 0;
+    }
+    
+    if ( _y1 >= 128) {
+        _y1 = 127;
+    }
+    
+    offset = (320 * _y0) + (x0 << 1);
+    ptr = &framebuffer[offset];
+    
+    for (int16_t y = _y0; y <= _y1; ++y) {
+        *ptr = pixel;
+        ++ptr;
+        *ptr = pixel;
+        ptr += 319;
+    }
 }
+
 
 
 void setMultiplier(NSSize size) {
@@ -297,16 +325,17 @@ void shutdownHW() {
     
     setMultiplier(bounds.size);
     
-
-    uint8_t *pixelPtr = &buffer[0];
-    uint32_t *bufferPtr = &stretchedBuffer[0];
     for ( int y = 0; y < 200; ++y ) {
+        
+        if ( y < dirtyLineY0 || y > dirtyLineY1 ) {
+            continue;
+        }
+        
         for ( int x = 0; x < 320; ++x ) {
-            uint8_t index = *pixelPtr;
+            uint32_t offset = ( 320 * y ) + x;
+            uint8_t index = buffer[ offset ];
             uint32_t pixel = palette[ index ];
-            *bufferPtr = pixel;
-            ++pixelPtr;
-            ++bufferPtr;
+            stretchedBuffer[offset] = pixel;
         }
     }
                                         /*  MAC_OS_X_VERSION_10_10*/

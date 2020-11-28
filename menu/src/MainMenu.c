@@ -57,6 +57,10 @@ int32_t MainMenu_initStateCallback(int32_t tag, void *data) {
             biggestOption = len;
         }
     }
+    
+    dirtyLineY0 = 0;
+    dirtyLineY1 = 200;
+
     return 0;
 }
 
@@ -116,6 +120,13 @@ void MainMenu_repaintCallback(void) {
                    (26 - kMainMenuOptionsCount) + c - 3,
                    &MainMenu_options[c][0], 4);
     }
+    
+    
+    if (stateTick > 5 ) {
+        dirtyLineY0 = (200 - optionsHeight) + (0 * 8) - 24;
+        dirtyLineY1 = (200 - optionsHeight) + (kMainMenuOptionsCount * 8) - 24;
+    }
+
 
 }
 

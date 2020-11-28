@@ -246,6 +246,11 @@ void flipRenderer() {
     int x, y;
 
     for (y = 0; y < 200; ++y) {
+
+        if ( y < dirtyLineY0 || y > dirtyLineY1 ) {
+            continue;
+        }
+
         for (x = 0; x < 320; ++x) {
 
             rect.x = 2 * x;

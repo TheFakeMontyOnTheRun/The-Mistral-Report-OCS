@@ -49,6 +49,8 @@ void enterState(enum EGameMenuState newState) {
         unloadStateCallback();
     }
     
+    stateTick = 0;
+    
     timeUntilNextState = MENU_ITEM_TIME_TO_BECOME_ACTIVE_MS;
     currentPresentationState = kAppearing;
     currentBackgroundBitmap = NULL;
@@ -103,7 +105,10 @@ int menuTick(long delta_time) {
 
     enum ECommand input;
     int32_t newState;
-
+    
+    globalTick++;
+    stateTick++;
+    
     handleSystemEvents();
 
     if (soundDriver != kNoSound) {
@@ -140,8 +145,13 @@ void mainLoop() {
     long now, delta_time;
     enum ECommand input;
     int32_t newState;
-    
+
+    globalTick++;
+    stateTick++;
+
     handleSystemEvents();
+
+    delta_time = 1000;
     
 #ifdef AMIGA
 #ifdef AGA8BPP

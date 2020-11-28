@@ -53,9 +53,10 @@ struct Pattern {
     int8_t ceiling;
     uint8_t geometryType;
     uint8_t block;
+    int8_t textureIndex;
 };
 
-const struct Projection projections[32] =
+const struct Projection projections[36] =
         {
                 //                                   Z
                 {0,  127, -64}, // 0
@@ -72,69 +73,87 @@ const struct Projection projections[32] =
                 {52, 74,  -11},  // 11
                 {53, 73,  -10}, // 12
                 {54, 72,  -9}, // 13
-                {54, 72,  -9}, // 14
-                {55, 71,  -8}, // 15
-                {55, 71,  -8}, // 16
-                {56, 71,  -8}, // 17
-                {56, 70,  -7}, // 18
-                {57, 70,  -7}, // 19
-                {57, 69,  -6}, // 20
-                {57, 69,  -6}, // 21
-                {57, 69,  -6},  // 22
-                {58, 69,  -6},  // 23
-                {58, 68,  -5},  // 24
-                {58, 68,  -5},  // 25
-                {58, 68,  -5},  // 26
-                {58, 68,  -5},  // 27
-                {59, 67,  -5}, // 28
-                {59, 67,  -4}, // 29
-                {59, 67,  -4}, // 30
-                {59, 67,  -4}, // 31
-        };
+                {54, 71,  -9}, // 14
+                {55, 70,  -8}, // 15
+                {55, 69,  -8}, // 16
+                {56, 68,  -8}, // 17
+                {56, 67,  -7}, // 18
+                {57, 66,  -7}, // 19
+                {57, 65,  -6}, // 20
+                {57, 64,  -6}, // 21
+                {57, 63,  -6},  // 22
+                {58, 62,  -6},  // 23
+                {58, 61,  -5},  // 24
+                {58, 60,  -5},  // 25
+                {58, 59,  -5},  // 26
+                {58, 58,  -5},  // 27
+                {59, 57,  -5}, // 28
+                {59, 56,  -4}, // 29
+                {59, 55,  -4}, // 30
+                {59, 54,  -4}, // 31
+                {59, 53,  -3}, // 32
+                {59, 52,  -3}, // 33
+                {59, 51,  -3}, // 34
+                {59, 50,  -3}, // 35
 
+        };
+/*
 const struct Pattern patterns[16] = {
-        {-1,  5, 0, 0}, //0
-        {-1,  5, 0, 1}, // 1
-        {-1, -1, 0, 0}, // 2
-        {-1, -1, 0, 0}, //3
-        {-1, -1, 4, 0}, //4
-        {-1, -1, 8, 0}, //5
-        {-1,  2, 0, 0}, //6
-        {-1,  5, 0, 0}, //7
-        { 0,  5, 0, 0}, // 8
-        { 2,  5, 0, 0}, // 9
+    {-1,  5, 0, 0, -1}, //0
+    {-1,  5, 0, 1, -1}, // 1
+    {-1, -1, 0, 0, -1}, // 2
+    {-1, -1, 0, 0, -1}, //3
+    {-1, -1, 4, 0, -1}, //4
+    {-1, -1, 8, 0, -1}, //5
+    {-1,  2, 0, 0, -1}, //6
+    {-1,  5, 0, 0, -1}, //7
+    { -1,  -1, 0, 0, -1}, // 8
+    { 2,  5, 0, 0, -1}, // 9
+};
+*/
+const struct Pattern patterns[16] = {
+        {-1,  5, 0, 0, -1}, //0
+        {-1,  5, 0, 1, -1}, // 1
+        {-1, -1, 0, 0, -1}, // 2
+        {-1, -1, 0, 0, 1}, //3
+        {-1, -1, 4, 0, 1}, //4
+        {-1, -1, 8, 0, 1}, //5
+        {-1,  2, 0, 0, -1}, //6
+        {-1,  5, 0, 0, -1}, //7
+        { -1,  -1, 0, 0, 1}, // 8
+        { 2,  5, 0, 0, -1}, // 9
 };
 
 const int8_t map[32][32] = {
-        {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 2, 2, 7, 7, 7, 7, 7, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 2, 2, 7, 0, 0, 0, 7, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 2, 2, 7, 7, 7, 7, 7, 2, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 2, 2, 7, 0, 0, 0, 7, 2, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 1, 1, 2, 7, 7, 7, 7, 7, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 2, 7, 7, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 2, 7, 7, 2, 2, 1, 1, 1, 1, 2, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 2, 7, 7, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 2, 7, 7, 2, 2, 1, 1, 1, 1, 2, 7, 7, 7, 1, 7, 7, 7, 7, 2, 2, 2, 2, 1, 0, 0, 0},
         {1, 1, 1, 1, 1, 1, 2, 7, 7, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 7, 2, 2, 1, 0, 0, 0},
         {1, 2, 2, 2, 2, 2, 2, 7, 7, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 7, 7, 7, 7, 2, 2, 1, 0, 0, 0},
         {1, 2, 2, 7, 7, 5, 3, 6, 6, 3, 4, 7, 7, 7, 7, 7, 7, 5, 2, 1, 1, 2, 7, 7, 7, 7, 2, 1, 1, 0, 0, 0},
         {1, 2, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 7, 7, 2, 1, 1, 2, 7, 7, 6, 7, 2, 1, 1, 0, 0, 0},
-        {1, 2, 2, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 2, 7, 7, 7, 7, 2, 2, 1, 1, 1, 0},
-        {1, 2, 2, 2, 6, 7, 8, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 2, 7, 7, 0, 7, 2, 2, 2, 2, 1, 0},
-        {1, 1, 2, 3, 6, 7, 7, 9, 7, 8, 7, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 2, 7, 7, 0, 7, 7, 7, 2, 2, 1, 0},
-        {0, 1, 2, 3, 6, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 7, 7, 7, 0, 0, 0, 7, 2, 2, 1, 0},
-        {0, 1, 2, 3, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 0, 0, 7, 0, 0, 0, 7, 2, 1, 1, 0},
-        {0, 1, 2, 2, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 7, 7, 7, 7, 0, 0, 0, 7, 2, 2, 1, 0},
-        {0, 1, 1, 2, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 2, 2, 2, 7, 0, 7, 7, 7, 2, 2, 1, 0},
+        {1, 2, 2, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 2, 7, 7, 7, 7, 2, 2, 1, 1, 1, 0},
+        {1, 2, 2, 2, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 1, 2, 7, 7, 0, 7, 2, 2, 2, 2, 1, 0},
+        {1, 1, 2, 3, 6, 7, 0, 0, 7, 7, 7, 0, 7, 7, 7, 0, 0, 7, 2, 1, 1, 2, 7, 7, 0, 7, 7, 7, 2, 2, 1, 0},
+        {0, 1, 2, 3, 6, 7, 0, 0, 7, 6, 7, 0, 7, 8, 7, 0, 0, 7, 2, 1, 1, 7, 7, 7, 0, 0, 0, 7, 2, 2, 1, 0},
+        {0, 1, 2, 3, 6, 7, 0, 0, 7, 7, 7, 7, 7, 7, 7, 0, 0, 7, 2, 1, 1, 0, 0, 7, 0, 0, 0, 7, 2, 1, 1, 0},
+        {0, 1, 2, 2, 6, 7, 0, 0, 0, 0, 0, 7, 6, 7, 0, 0, 0, 7, 2, 1, 7, 7, 7, 7, 0, 0, 0, 7, 2, 2, 1, 0},
+        {0, 1, 1, 2, 7, 7, 0, 0, 0, 0, 0, 7, 7, 7, 0, 0, 0, 7, 2, 1, 2, 2, 2, 7, 0, 7, 7, 7, 2, 2, 1, 0},
         {0, 0, 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 2, 2, 2, 7, 0, 7, 2, 2, 2, 2, 1, 0},
         {0, 0, 1, 2, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 2, 1, 2, 2, 2, 7, 0, 7, 2, 2, 1, 1, 1, 0},
         {0, 0, 1, 2, 7, 0, 0, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 7, 2, 1, 2, 2, 2, 7, 0, 7, 2, 2, 1, 0, 0, 0},
         {0, 0, 1, 2, 7, 0, 0, 7, 4, 5, 7, 7, 7, 7, 7, 7, 7, 7, 2, 1, 2, 2, 2, 7, 7, 7, 2, 2, 1, 0, 0, 0},
-        {0, 0, 1, 2, 7, 0, 0, 7, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 7, 7, 7, 2, 2, 2, 1, 0, 0, 0},
-        {0, 0, 1, 2, 7, 0, 0, 7, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 7, 0, 7, 2, 2, 1, 1, 0, 0, 0},
-        {0, 1, 1, 2, 7, 0, 0, 7, 2, 2, 2, 2, 2, 7, 0, 0, 7, 7, 3, 1, 2, 2, 7, 0, 7, 2, 1, 1, 0, 0, 0, 0},
-        {0, 1, 2, 2, 7, 0, 0, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 7, 7, 7, 7, 7, 7, 0, 7, 2, 2, 1, 0, 0, 0, 0},
-        {0, 1, 2, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 7, 7, 7, 7, 7, 7, 7, 7, 2, 2, 1, 0, 0, 0, 0},
-        {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 0, 0, 0, 7, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 7, 0, 0, 7, 7, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
+        {0, 0, 1, 3, 6, 6, 6, 6, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 7, 7, 7, 2, 2, 2, 1, 0, 0, 0},
+        {0, 0, 1, 2, 7, 0, 0, 7, 2, 1, 1, 1, 2, 7, 7, 7, 7, 7, 7, 1, 2, 2, 7, 0, 7, 2, 2, 1, 1, 0, 0, 0},
+        {0, 1, 1, 2, 7, 0, 0, 7, 2, 2, 2, 2, 2, 7, 0, 0, 7, 0, 7, 1, 2, 2, 7, 0, 7, 2, 1, 1, 0, 0, 0, 0},
+        {0, 1, 2, 2, 7, 0, 0, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 7, 1, 7, 7, 7, 0, 7, 2, 2, 1, 0, 0, 0, 0},
+        {0, 1, 2, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 7, 7, 1, 7, 7, 7, 7, 7, 2, 2, 1, 0, 0, 0, 0},
+        {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7, 0, 0, 0, 7, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 7, 0, 0, 7, 7, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 7, 7, 7, 7, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -149,7 +168,7 @@ int8_t min(int8_t x1, int8_t x2) {
 }
 
 
-void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ, uint8_t type) {
+void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ, uint8_t type, int8_t textureIndex) {
 
     int16_t z1;
     int16_t z0px;
@@ -171,10 +190,6 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
 
     uint8_t drawContour;
 
-    if (z0 >= 32) {
-        z0 = 31;
-    }
-
     z1 = z0 + dZ;
 
     if (z0 <= 2) {
@@ -184,11 +199,6 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
     if (z1 <= 2) {
         return;
     }
-
-    if (z1 >= 32) {
-        z1 = 31;
-    }
-
 
     if (type == WEDGE_TYPE_NEAR_LEFT) {
         z0px = (projections[z0].px);
@@ -232,10 +242,17 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
     }
 
     drawContour = 1;
-
+#ifdef TEXTURES
+    if (textureIndex != -1 ) {
+        drawWall(intToFix(px0z0 * 2), intToFix(px1z1 * 2), intToFix(py0z0), intToFix(py1z0), intToFix(py0z1), intToFix(py1z1), &montyTexture->rowMajor[0], intToFix(2), z0 );
+        return;
+    }
+#endif
+    
+    
     {
         int16_t x0, x1;
-
+#ifndef FILLED_POLYS
         if (drawContour) {
 
             if (IN_RANGE(0, 127, px0z0) && stencilHigh[px0z0] < py0z0) {
@@ -247,7 +264,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 graphicsVerticalLine(px1z1, py0z1, max(py1z1, stencilHigh[px1z1]), 0);
             }
         }
-
+#endif
 
 
         /* The upper segment */
@@ -263,44 +280,6 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
             int16_t upperSy = upperY0 < upperY1 ? 1 : -1;
             int16_t upperErr = upperDx + upperDy;  /* error value e_xy */
             int16_t upperErr2;
-
-            while ((x0 != x1 || upperY0 != upperY1)) {
-
-                if (IN_RANGE(0, 127, x0)) {
-                    if (stencilHigh[x0] <= upperY0) {
-                        if (drawContour) {
-                            graphicsPut (x0, upperY0, 0);
-                        }
-                    }
-                }
-
-                /* loop */
-                upperErr2 = upperErr * 2;
-
-                if (upperErr2 >= upperDy) {
-                    upperErr += upperDy; /* e_xy+e_x > 0 */
-                    x0 += upperSx;
-                }
-
-                if (x0 >= 128) {
-                    goto done_upper_stroke;
-                }
-
-                if (upperErr2 <= upperDx) {
-                    /* e_xy+e_y < 0 */
-                    upperErr += upperDx;
-                    upperY0 += upperSy;
-                }
-            }
-        }
-
-        done_upper_stroke:
-
-        /* The lower segment */
-        x0 = px0z0;
-        x1 = px1z1;
-
-        if (x0 != x1) {
             int16_t lowerY0 = py0z0;
             int16_t lowerY1 = py0z1;
             int16_t lowerDx = abs(x1 - x0);
@@ -310,24 +289,35 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
             int16_t lowerErr = lowerDx + lowerDy;  /* error value e_xy */
             int16_t lowerErr2;
 
-            while ((x0 != x1 || lowerY0 != lowerY1)) {
+            while ((x0 != x1 && (upperY0 != upperY1 || lowerY0 != lowerY1) )) {
 
                 if (IN_RANGE(0, 127, x0)) {
+#ifndef FILLED_POLYS
+                    if (stencilHigh[x0] <= upperY0) {
+                        if (drawContour) {
+                            graphicsPut (x0, upperY0, 0);
+                        }
+                        
+                    }
+#endif
+
                     if (stencilHigh[x0] < lowerY0) {
                         if (drawContour) {
 #ifdef FILLED_POLYS
-                            //graphicsVerticalLine(x0, y0, stencilHigh[x0], 8);
+                            graphicsVerticalLine(x0, max(upperY0, stencilHigh[x0]), lowerY0, 4);
+#else
+                            graphicsPut(x0, lowerY0 - 1, 0);
 #endif
-                            graphicsPut(x0, lowerY0, 0);
                         }
                         stencilHigh[x0] = lowerY0;
                     }
                 }
 
                 /* loop */
-                lowerErr2 = lowerErr * 2;
+                upperErr2 = upperErr * 2;
 
-                if (lowerErr2 >= lowerDy) {
+                if (upperErr2 >= upperDy || lowerErr2 >= lowerDy ) {
+                    upperErr += upperDy; /* e_xy+e_x > 0 */
                     lowerErr += lowerDy; /* e_xy+e_x > 0 */
                     x0 += lowerSx;
                 }
@@ -335,6 +325,15 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 if (x0 >= 128) {
                     return;
                 }
+
+                if (upperErr2 <= upperDx) {
+                    /* e_xy+e_y < 0 */
+                    upperErr += upperDx;
+                    upperY0 += upperSy;
+                }
+
+                /* loop */
+                lowerErr2 = lowerErr * 2;
 
                 if (lowerErr2 <= lowerDx) {
                     /* e_xy+e_y < 0 */
@@ -346,7 +345,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
     }
 }
 
-void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ ) {
+void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ, int8_t textureIndex ) {
 
     int8_t z1;
     uint8_t z0px;
@@ -366,16 +365,7 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
 
     uint8_t drawContour;
 
-    if (z0 >= 32) {
-        z0 = 31;
-    }
-
     z1 = z0 + dZ;
-
-    if (z1 >= 32) {
-        z1 = 31;
-    }
-
 
     z0px = (projections[z0].px);
     z1px = (projections[z1].px);
@@ -399,10 +389,23 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
         return;
     }
 
+#ifdef TEXTURES
+    if (textureIndex != -1 ) {
+        drawFrontWall(intToFix(px0z0 * 2), intToFix(py0z0), intToFix(px1z0 * 2), intToFix(py1z0), &montyTexture->rotations[0][0], intToFix(2), z0, 0);
+        return;
+    }
+#endif
+
+/*
+    drawWall(intToFix(px0z0 * 2), intToFix(px1z1 * 2), intToFix(py0z0), intToFix(py1z0), intToFix(py0z1), intToFix(py1z1), &montyTexture->rowMajor[0], intToFix(1), 1 );
+
+    drawWall(intToFix(px0z0 * 2), intToFix(px1z1 * 2), intToFix(py0z0), intToFix(py1z0), intToFix(py0z1), intToFix(py1z1), &montyTexture->rowMajor[0], intToFix(1), 1 );
+*/
+    
     drawContour = (dY);
     {
         int16_t x, x0, x1;
-
+#ifndef FILLED_POLYS
         if (drawContour) {
 
             if (IN_RANGE(0, 127, px0z0) && stencilHigh[px0z0] < py0z0) {
@@ -421,7 +424,7 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
             }
 
         }
-
+#endif
         /* Draw the horizontal outlines of z0 and z1 */
 
         if (py0z0 > py0z1) {
@@ -431,9 +434,10 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
                     if (drawContour) {
 #ifdef FILLED_POLYS
                         graphicsVerticalLine(x, py0z0, stencilHigh[x], 9);
-#endif
+#else
                         graphicsPut(x, py0z0, 0);
                         graphicsPut(x, stencilHigh[x], 0);
+#endif
                     }
                     stencilHigh[x] = py0z0;
                 }
@@ -445,9 +449,10 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
                 if (IN_RANGE(0, 127, x) && stencilHigh[x] < py0z0) {
 #ifdef FILLED_POLYS
                     graphicsVerticalLine(x, py0z0, stencilHigh[x], 9);
-#endif
+#else
                     graphicsPut(x, py0z0, 0);
                     graphicsPut(x, stencilHigh[x], 0);
+#endif
                 }
             }
         }
@@ -473,10 +478,11 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
                     if (stencilHigh[x0] < y0) {
                         if (drawContour) {
 #ifdef FILLED_POLYS
-                            graphicsVerticalLine(x0, y0, stencilHigh[x0], 9);
-#endif
+                            graphicsVerticalLine(x0, y0, stencilHigh[x0], 3);
+#else
                             graphicsPut(x0, y0, 0);
                             graphicsPut(x0, stencilHigh[x0], 0);
+#endif
                         }
                         stencilHigh[x0] = y0;
                     }
@@ -523,10 +529,11 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
                 if (IN_RANGE(0, 127, x0) && stencilHigh[x0] < y0) {
                     if (drawContour) {
 #ifdef FILLED_POLYS
-                        graphicsVerticalLine(x0, y0, stencilHigh[x0], 9);
-#endif
+                        graphicsVerticalLine(x0, y0, stencilHigh[x0], 3);
+#else
                         graphicsPut(x0, y0, 0);
                         graphicsPut(x0, stencilHigh[x0], 0);
+#endif
                     }
                     stencilHigh[x0] = y0;
                 }
@@ -555,12 +562,14 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
         if (py0z0 <= py0z1) {
             /* Ceiling is higher than the camera*/
             /* Draw the last segment */
-
+            
             for (x = px0z1; x <= px1z1; ++x) {
                 if (IN_RANGE(0, 127, x) && stencilHigh[x] < py0z1) {
+#ifndef FILLED_POLYS
                     if (drawContour) {
                         graphicsPut(x, py0z1, 0);
                     }
+#endif
                     stencilHigh[x] = py0z1;
                 }
             }
@@ -575,7 +584,7 @@ void drawPattern(uint8_t pattern, uint8_t x0, uint8_t x1, uint8_t y) {
 
     if (type == 0) {
         drawHighCubeAt(x0, patterns[pattern].ceiling, y, x1 - x0,
-                       patterns[0].ceiling - patterns[pattern].ceiling, 1);
+                       patterns[0].ceiling - patterns[pattern].ceiling, 1, patterns[pattern].textureIndex);
 
     } else {
         switch( cameraRotation) {
@@ -591,7 +600,7 @@ void drawPattern(uint8_t pattern, uint8_t x0, uint8_t x1, uint8_t y) {
         }
 
         drawWedge(x0, patterns[pattern].ceiling, y, x1 - x0,
-                  patterns[0].ceiling - patterns[pattern].ceiling, 1, type);
+                  patterns[0].ceiling - patterns[pattern].ceiling, 1, type, patterns[pattern].textureIndex);
     }
 }
 
@@ -601,7 +610,7 @@ void renderScene() {
     switch (cameraRotation) {
         case DIRECTION_N: {
 
-            int8_t limit = max(cameraZ - 19, 0);
+            int8_t limit = max(cameraZ - 31, 0);
             for (int8_t y = min(cameraZ - 3, 31); y >= limit; --y) {
                 int8_t x;
                 lastIndex = cameraX;
@@ -749,21 +758,110 @@ void Interrogation_initialPaintCallback() {
     drawRect(142, 152, 80, 40, 0);
 
     drawRect(236, 152, 64, 40, 0);
+    
+    dirtyLineY0 = 0;
+    dirtyLineY1 = 200;
+    fill(7, 128, 256 - 8, 8, 0, TRUE);
 }
 
 void Interrogation_repaintCallback() {
     memset(&stencilHigh[0], 0, 128);
 
     fill(255, 8, 8, 128, 0, TRUE);
-    fill(0, 128, 256, 8, 0, TRUE);
+    
 
-    fill(0, 0, 256, 128, 7, FALSE);
+    fill(0, 0, 256, 64,
+#ifndef FILLED_POLYS
+         7
+#else
+         7
+#endif
+         , FALSE);
+    
+    fill(0, 64, 256, 64, 7, FALSE);
 
     drawRect(0, 0, 256, 128, 0);
     fill(0, 0, 256, 8, 0, FALSE);
     renderScene();
 
-    drawWall(intToFix(16), intToFix(64), intToFix(32), intToFix(64), intToFix(16), intToFix(96), &montyTexture->rowMajor[0], intToFix(1), 1 );
+    int farthest = 0;
+    
+        
+//
+//        for ( int  x = 0; x < 128; x += 1 ) {
+//            if ( farthest < stencilHigh[x] ) {
+//                farthest = stencilHigh[x];
+//            }
+//        }
+//
+//
+//        if ( ( farthest ) < nextDirtyLineY1 ) {
+//            dirtyLineY1 = nextDirtyLineY1 + 1;
+//            nextDirtyLineY1 = farthest;
+//        } else {
+//            nextDirtyLineY1 = dirtyLineY1 = farthest;
+//        }
+//
+//
+//    if (stateTick < 10 ) {
+//        dirtyLineY0 = 0;
+//        dirtyLineY1 = 128;
+//    }
+
+#ifndef FILLED_POLYS
+//    for ( int nextPower = 64; nextPower < 128; nextPower += 2 ) {
+//
+//        if (nextPower >= farthest) {
+//            graphicsHorizontalLine( 0, 128, nextPower, 3);
+//        } else {
+//            for ( int x = 0; x < 128; ++x ) {
+//                if (nextPower > stencilHigh[x]) {
+//                    graphicsPut( x, nextPower, 3 );
+//                }
+//            }
+//        }
+//
+//
+//    }
+#endif
+ 
+    if (viewMenu != -1) {
+        int level = 0;
+        while ( level <= viewMenu) {
+        
+            int c;
+            uint8_t optionsHeight = 8 * 4;
+            biggestOption = 10;
+            
+            drawWindow( 1 + (4 * level), 1, biggestOption, 5, "Action");
+            
+            for (c = 0; c < 4; ++c) {
+                
+                int isCursor = (level == viewMenu ) && (cursorPosition == c)
+                && ((currentPresentationState == kConfirmInputBlink1)
+                    || (currentPresentationState == kConfirmInputBlink3)
+                    || (currentPresentationState == kConfirmInputBlink5)
+                    || (currentPresentationState == kWaitingForInput));
+                
+                if (isCursor) {
+                    fill(1 + ( 8 * 4 *  level ), ((c + 1) * 8), (biggestOption * 8), 8, 0, FALSE);
+                    
+                    drawTextAt(2 + (4 * level),
+                               2 + c,
+                               &options[c][0], 2);
+
+                } else {
+                    drawTextAt(2 + (4 * level),
+                               2 + c,
+                               &options[c][0], 4);
+
+                }
+                
+            }
+            
+            ++level;
+        }
+    }
 }
 
 int32_t Interrogation_tickCallback(int32_t tag, void *data) {
@@ -779,33 +877,61 @@ int32_t Interrogation_tickCallback(int32_t tag, void *data) {
         prevX = cameraX;
         prevZ = cameraZ;
 
-        switch (tag) {
-            case kCommandLeft:
-                cameraRotation--;
-                if (cameraRotation < 0) {
-                    cameraRotation = 3;
-                }
-                break;
+        if (viewMenu == -1 ) {
+            switch (tag) {
+                case kCommandLeft:
+                    cameraRotation--;
+                    if (cameraRotation < 0) {
+                        cameraRotation = 3;
+                    }
+                    break;
+                    
+                case kCommandRight:
+                    cameraRotation = (cameraRotation + 1) & 3;
+                    break;
+                    
+                case kCommandBack:
+                    return kMainMenu;
+                    
+                case kCommandStrafeLeft:
+                    cameraX--;
+                    break;
+                case kCommandStrafeRight:
+                    cameraX++;
+                    break;
+                case kCommandDown:
+                    cameraZ++;
+                    break;
+                case kCommandFire1:
+                    ++viewMenu;
+                    break;
 
-            case kCommandRight:
-                cameraRotation = (cameraRotation + 1) & 3;
-                break;
+                case kCommandUp:
+                    cameraZ--;
+                    break;
+            }
+        } else {
+            switch (tag) {
+                case kCommandDown:
+                    cursorPosition++;
+                    break;
+                    
+                case kCommandBack:
+                    viewMenu = -1;
+                    break;
+                    
+                case kCommandFire2:
+                    --viewMenu;
+                    break;
 
-            case kCommandBack:
-                return kMainMenu;
-
-            case kCommandStrafeLeft:
-                cameraX--;
-                break;
-            case kCommandStrafeRight:
-                cameraX++;
-                break;
-            case kCommandDown:
-                cameraZ++;
-                break;
-            case kCommandUp:
-                cameraZ--;
-                break;
+                case kCommandFire1:
+                    ++viewMenu;
+                    break;
+                    
+                case kCommandUp:
+                    cursorPosition--;
+                    break;
+            }
         }
 
         if (cameraZ >= 32) {

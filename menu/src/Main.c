@@ -40,6 +40,8 @@ void shutdownHW();
 void initHW() {
     initFileReader("base.pfs");
     graphicsInit();
+    stateTick = 0;
+    globalTick = 0;
 }
 
 void shutdownHW() {

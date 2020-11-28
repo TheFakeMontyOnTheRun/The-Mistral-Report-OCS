@@ -28,6 +28,9 @@ void initHW() {
 	initFileReader([path UTF8String]);
     graphicsInit();
     setupOPL2(0);
+    stateTick = 0;
+    globalTick = 0;
+
 }
 
 void shutdownHW();

@@ -48,6 +48,8 @@ int32_t CreditsScreen_initStateCallback(int32_t tag, void *data) {
 
     belle = loadBitmap("belle.img");
 
+    dirtyLineY0 = 0;
+    dirtyLineY1 = 200;
     return 0;
 }
 

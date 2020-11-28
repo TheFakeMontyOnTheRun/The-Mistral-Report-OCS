@@ -8,6 +8,10 @@ extern uint8_t framebuffer[320 * 200];
 extern uint32_t palette[256];
 extern enum ECommand mBufferedCommand;
 
+int16_t dirtyLineY0;
+int16_t dirtyLineY1;
+int16_t nextDirtyLineY1;
+
 void graphicsInit();
 
 void graphicsPut(int x, int y, uint8_t pixel );
@@ -76,8 +80,7 @@ void drawFrontWall(FixP_t x0,
                    const uint8_t *  __restrict__  texture,
                    const FixP_t textureScaleY,
                    const int z,
-                   const int enableAlpha,
-                   const int size);
+                   const int enableAlpha);
 
 void drawFloor(FixP_t y0,
                FixP_t y1,
@@ -88,8 +91,8 @@ void drawFloor(FixP_t y0,
                int z,
                const uint8_t * __restrict__ texture);
 
-#define distanceForPenumbra 16
-#define distanceForDarkness 32
+#define distanceForPenumbra 8
+#define distanceForDarkness 16
 #define NATIVE_TEXTURE_SIZE 32
 #define TOTAL_TEXTURES 32
 
