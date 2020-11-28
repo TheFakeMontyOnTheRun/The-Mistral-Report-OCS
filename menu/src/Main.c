@@ -38,7 +38,16 @@ void shutdownHW();
 
 
 void initHW() {
+#ifdef CD32
+    initFileReader("base5.pfs");
+#else
+#ifndef AGA5BPP
     initFileReader("base.pfs");
+#else
+    initFileReader("base4.pfs");
+#endif
+#endif
+
     graphicsInit();
     stateTick = 0;
     globalTick = 0;
