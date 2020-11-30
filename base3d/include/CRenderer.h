@@ -91,8 +91,8 @@ void drawFloor(FixP_t y0,
                int z,
                const uint8_t * __restrict__ texture);
 
-#define distanceForPenumbra 8
-#define distanceForDarkness 16
+#define distanceForPenumbra 64
+#define distanceForDarkness 128
 #define NATIVE_TEXTURE_SIZE 32
 #define TOTAL_TEXTURES 32
 
