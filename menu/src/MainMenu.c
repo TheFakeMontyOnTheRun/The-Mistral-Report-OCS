@@ -113,7 +113,13 @@ void MainMenu_repaintCallback(void) {
         if (isCursor) {
             fill((uint16_t) (320 - (biggestOption * 8)) - 8 - 24,
                  (200 - optionsHeight) + (c * 8) - 24,
-                 (biggestOption * 8) + 16, 8, 0, FALSE);
+                 (biggestOption * 8) + 16, 8,
+#ifdef AGA5BPP
+                 7
+#else
+                 0
+#endif
+                 , FALSE);
         }
 
         drawTextAt(40 - biggestOption + 1 - 3,

@@ -31,7 +31,14 @@ void drawWindow(const int x, const int y, const int dx, const int dy, const char
 void drawTextWindow(const int x, const int y, const int dx, const int dy, const char *__restrict__ title,
                     const char *__restrict__ content) {
     drawWindow(x, y, dx, dy, title);
-    drawTextAt(x + 1, y + 2, content, 0);
+    drawTextAt(x + 1, y + 2, content,
+
+#ifdef AGA5BPP
+            7
+#else
+               0
+#endif
+            );
 }
 
 void drawImageWindow(const int x, const int y, const int dx, const int dy, const char *__restrict__ title,

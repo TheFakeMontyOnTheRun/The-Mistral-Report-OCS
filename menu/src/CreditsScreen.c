@@ -108,7 +108,13 @@ void CreditsScreen_repaintCallback(void) {
         drawRect(0, 0, 320, (lines + 3) * 8, 0);
         fill(0, 0, 320, 8, 0, FALSE);
         drawTextAt(2, 1, "Credits", 4);
-        drawTextAt(1, 3, mainText, 0);
+        drawTextAt(1, 3, mainText,
+#ifdef AGA5BPP
+                7
+#else
+                   0
+#endif
+        );
     }
 
     fill(8, 128, 64, 64, 7, FALSE);
@@ -149,11 +155,24 @@ void CreditsScreen_repaintCallback(void) {
         if (isCursor) {
             fill(320 - (len * 8) - 16 - 8 - 8,
                  (200 - optionsHeight) + (c * 8) - 8 - 8, (len * 8) + 16, 8,
-                 0, FALSE);
+#ifdef AGA5BPP
+                    7
+#else
+                 0
+#endif
+                 , FALSE);
         }
 
         drawTextAt(40 - len - 2, (26 - CreditsScreen_optionsCount) + c - 2,
-                   &CreditsScreen_options[c][0], isCursor ? 4 : 0);
+                   &CreditsScreen_options[c][0],
+
+
+#ifdef AGA5BPP
+                isCursor ? 4 : 7
+#else
+                   isCursor ? 4 : 0
+#endif
+                   );
     }
 }
 
