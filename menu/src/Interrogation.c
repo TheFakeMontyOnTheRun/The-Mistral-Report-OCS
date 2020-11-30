@@ -708,6 +708,10 @@ void renderScene() {
         }
             break;
     }
+    
+    for (uint8_t x = 0; x < 128; x++ ) {
+        graphicsVerticalLine(x, stencilHigh[x] + 1, 128, 6);
+    }
 }
 
 
