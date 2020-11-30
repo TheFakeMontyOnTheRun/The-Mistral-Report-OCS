@@ -30,10 +30,10 @@ enum DIRECTION {
 };
 
 const char *options[4] = {
-    "Option 1",
-    "Option 2",
-    "Option 3",
-    "Option 4",
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4",
 };
 
 #define IN_RANGE(V0, V1, V)  ((V0) <= (V) && (V) <= (V1))
@@ -46,7 +46,7 @@ int8_t cameraRotation = 0;
 int8_t viewMenu;
 int lastDirtyLineY1;
 
-void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1 );
+void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 
 struct Texture *montyTexture;
 
@@ -108,16 +108,16 @@ const struct Projection projections[36] =
         };
 
 const struct Pattern patterns[16] = {
-    {-1,  5, 0, 0, -1}, //0
-    {-1,  5, 0, 1, -1}, // 1
-    {-1, -1, 0, 0, -1}, // 2
-    {-1, -1, 0, 0, -1}, //3
-    {-1, -1, 4, 0, -1}, //4
-    {-1, -1, 8, 0, 1}, //5
-    {-1,  2, 0, 0, -1}, //6
-    {-1,  5, 0, 0, -1}, //7
-    { -1,  -1, 0, 0, -1}, // 8
-    { 2,  5, 0, 0, -1}, // 9
+        {-1, 5,  0, 0, -1}, //0
+        {-1, 5,  0, 1, -1}, // 1
+        {-1, -1, 0, 0, -1}, // 2
+        {-1, -1, 0, 0, -1}, //3
+        {-1, -1, 4, 0, -1}, //4
+        {-1, -1, 8, 0, 1}, //5
+        {-1, 2,  0, 0, -1}, //6
+        {-1, 5,  0, 0, -1}, //7
+        {-1, -1, 0, 0, -1}, // 8
+        {2,  5,  0, 0, -1}, // 9
 };
 
 const int8_t map[32][32] = {
@@ -244,8 +244,8 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
         return;
     }
 #endif
-    
-    
+
+
     {
         int16_t x0, x1;
 #ifndef FILLED_POLYS
@@ -285,15 +285,15 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
             int16_t lowerErr = lowerDx + lowerDy;  /* error value e_xy */
             int16_t lowerErr2;
 
-            while ((x0 != x1 && (upperY0 != upperY1 || lowerY0 != lowerY1) )) {
+            while ((x0 != x1 && (upperY0 != upperY1 || lowerY0 != lowerY1))) {
 
                 if (IN_RANGE(0, 127, x0)) {
 #ifndef FILLED_POLYS
                     if (stencilHigh[x0] <= upperY0) {
                         if (drawContour) {
-                            graphicsPut (x0, upperY0, 0);
+                            graphicsPut(x0, upperY0, 0);
                         }
-                        
+
                     }
 #endif
 
@@ -312,7 +312,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
                 /* loop */
                 upperErr2 = upperErr * 2;
 
-                if (upperErr2 >= upperDy || lowerErr2 >= lowerDy ) {
+                if (upperErr2 >= upperDy || lowerErr2 >= lowerDy) {
                     upperErr += upperDy; /* e_xy+e_x > 0 */
                     lowerErr += lowerDy; /* e_xy+e_x > 0 */
                     x0 += lowerSx;
@@ -341,7 +341,7 @@ void drawWedge(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ,
     }
 }
 
-void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ, int8_t textureIndex ) {
+void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_t dZ, int8_t textureIndex) {
 
     int8_t z1;
     uint8_t z0px;
@@ -397,7 +397,7 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
 
     drawWall(intToFix(px0z0 * 2), intToFix(px1z1 * 2), intToFix(py0z0), intToFix(py1z0), intToFix(py0z1), intToFix(py1z1), &montyTexture->rowMajor[0], intToFix(1), 1 );
 */
-    
+
     drawContour = (dY);
     {
         int16_t x, x0, x1;
@@ -409,7 +409,7 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
             }
 
             if (IN_RANGE(0, 127, px1z0) && stencilHigh[px1z0] < py0z0) {
-                graphicsVerticalLine(px1z0, py0z0, stencilHigh[px1z0],0);
+                graphicsVerticalLine(px1z0, py0z0, stencilHigh[px1z0], 0);
             }
             if (IN_RANGE(0, 127, px0z1) && px0z1 < px0z0 && py0z1 > stencilHigh[px0z1]) {
                 graphicsVerticalLine(px0z1, py0z1, stencilHigh[px0z1], 0);
@@ -558,7 +558,7 @@ void drawHighCubeAt(int8_t x0, int8_t y0, int8_t z0, int8_t dX, int8_t dY, int8_
         if (py0z0 <= py0z1) {
             /* Ceiling is higher than the camera*/
             /* Draw the last segment */
-            
+
             for (x = px0z1; x <= px1z1; ++x) {
                 if (IN_RANGE(0, 127, x) && stencilHigh[x] < py0z1) {
 #ifndef FILLED_POLYS
@@ -583,7 +583,7 @@ void drawPattern(uint8_t pattern, uint8_t x0, uint8_t x1, uint8_t y) {
                        patterns[0].ceiling - patterns[pattern].ceiling, 1, patterns[pattern].textureIndex);
 
     } else {
-        switch( cameraRotation) {
+        switch (cameraRotation) {
             case DIRECTION_W:
             case DIRECTION_E:
                 if (type == WEDGE_TYPE_NEAR_LEFT) {
@@ -708,8 +708,8 @@ void renderScene() {
         }
             break;
     }
-    
-    for (uint8_t x = 0; x < 128; x++ ) {
+
+    for (uint8_t x = 0; x < 128; x++) {
         graphicsVerticalLine(x, stencilHigh[x] + 1, 128, 6);
     }
 }
@@ -757,43 +757,42 @@ void Interrogation_initialPaintCallback() {
     drawRect(142, 152, 80, 40, 0);
 
     drawRect(236, 152, 64, 40, 0);
-    
+
     dirtyLineY0 = 0;
     dirtyLineY1 = 200;
     fill(7, 128, 256 - 8, 8, 0, TRUE);
 }
 
 void Interrogation_repaintCallback() {
-    
+
     memset(&stencilHigh[0], 0, 128);
 
     fill(255, 8, 8, 128, 0, TRUE);
-    
+
 
     fill(0, 0, 256, 64,
 #ifndef FILLED_POLYS
          7
 #else
-         7
+            7
 #endif
-         , FALSE);
-    
+            , FALSE);
+
     fill(0, 64, 256, 64, 7, FALSE);
 
     drawRect(0, 0, 256, 128, 0);
     renderScene();
 
     int farthest = 0;
-    
-        
 
-        for ( int  x = 0; x < 128; x += 1 ) {
-            if ( farthest < stencilHigh[x] ) {
-                farthest = stencilHigh[x];
-            }
+
+    for (int x = 0; x < 128; x += 1) {
+        if (farthest < stencilHigh[x]) {
+            farthest = stencilHigh[x];
         }
+    }
 
-    if (stateTick > 10 ) {
+    if (stateTick > 10) {
         dirtyLineY0 = 0;
         dirtyLineY1 = nextDirtyLineY1;
         nextDirtyLineY1 = farthest + 1;
@@ -817,28 +816,28 @@ void Interrogation_repaintCallback() {
 //
 //    }
 #endif
- 
+
     if (viewMenu != -1) {
         int level = 0;
-        while ( level <= viewMenu) {
-        
+        while (level <= viewMenu) {
+
             int c;
             uint8_t optionsHeight = 8 * 4;
             biggestOption = 10;
-            
-            drawWindow( 1 + (4 * level), 1, biggestOption, 5, "Action");
-            
+
+            drawWindow(1 + (4 * level), 1, biggestOption, 5, "Action");
+
             for (c = 0; c < 4; ++c) {
-                
-                int isCursor = (level == viewMenu ) && (cursorPosition == c)
-                && ((currentPresentationState == kConfirmInputBlink1)
-                    || (currentPresentationState == kConfirmInputBlink3)
-                    || (currentPresentationState == kConfirmInputBlink5)
-                    || (currentPresentationState == kWaitingForInput));
-                
+
+                int isCursor = (level == viewMenu) && (cursorPosition == c)
+                               && ((currentPresentationState == kConfirmInputBlink1)
+                                   || (currentPresentationState == kConfirmInputBlink3)
+                                   || (currentPresentationState == kConfirmInputBlink5)
+                                   || (currentPresentationState == kWaitingForInput));
+
                 if (isCursor) {
-                    fill(1 + ( 8 * 4 *  level ), ((c + 1) * 8), (biggestOption * 8), 8, 0, FALSE);
-                    
+                    fill(1 + (8 * 4 * level), ((c + 1) * 8), (biggestOption * 8), 8, 0, FALSE);
+
                     drawTextAt(2 + (4 * level),
                                2 + c,
                                &options[c][0], 2);
@@ -849,9 +848,9 @@ void Interrogation_repaintCallback() {
                                &options[c][0], 4);
 
                 }
-                
+
             }
-            
+
             ++level;
         }
     }
@@ -865,12 +864,12 @@ int32_t Interrogation_tickCallback(int32_t tag, void *data) {
     uint8_t prevX;
     uint8_t prevZ;
 
-    if (currentPresentationState == kWaitingForInput ) {
+    if (currentPresentationState == kWaitingForInput) {
 
         prevX = cameraX;
         prevZ = cameraZ;
 
-        if (viewMenu == -1 ) {
+        if (viewMenu == -1) {
             switch (tag) {
                 case kCommandLeft:
                     cameraRotation--;
@@ -878,14 +877,14 @@ int32_t Interrogation_tickCallback(int32_t tag, void *data) {
                         cameraRotation = 3;
                     }
                     break;
-                    
+
                 case kCommandRight:
                     cameraRotation = (cameraRotation + 1) & 3;
                     break;
-                    
+
                 case kCommandBack:
                     return kMainMenu;
-                    
+
                 case kCommandStrafeLeft:
                     cameraX--;
                     break;
@@ -908,11 +907,11 @@ int32_t Interrogation_tickCallback(int32_t tag, void *data) {
                 case kCommandDown:
                     cursorPosition++;
                     break;
-                    
+
                 case kCommandBack:
                     viewMenu = -1;
                     break;
-                    
+
                 case kCommandFire2:
                     --viewMenu;
                     break;
@@ -920,7 +919,7 @@ int32_t Interrogation_tickCallback(int32_t tag, void *data) {
                 case kCommandFire1:
                     ++viewMenu;
                     break;
-                    
+
                 case kCommandUp:
                     cursorPosition--;
                     break;
