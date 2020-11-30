@@ -18,6 +18,9 @@ InitialPaintCallback initialPaintCallback = NULL;
 RepaintCallback repaintCallback = NULL;
 TickCallback tickCallback = NULL;
 UnloadStateCallback unloadStateCallback = NULL;
+uint32_t stateTick = 0;
+uint32_t globalTick = 0;
+
 
 extern long timeUntilNextState;
 extern enum EPresentationState currentPresentationState;

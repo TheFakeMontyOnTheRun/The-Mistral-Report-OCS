@@ -44,7 +44,7 @@ int8_t cameraX = 33;
 int8_t cameraZ = 22;
 int8_t cameraRotation = 0;
 int8_t viewMenu;
-int lastDirtyLineY1;
+int nextDirtyLineY1;
 
 void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 

@@ -8,9 +8,8 @@ extern uint8_t framebuffer[320 * 200];
 extern uint32_t palette[256];
 extern enum ECommand mBufferedCommand;
 
-int16_t dirtyLineY0;
-int16_t dirtyLineY1;
-int16_t nextDirtyLineY1;
+extern int16_t dirtyLineY0;
+extern int16_t dirtyLineY1;
 
 void graphicsInit();
 

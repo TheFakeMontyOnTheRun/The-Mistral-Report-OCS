@@ -12,6 +12,8 @@
 
 uint16_t clippingY1 = 200;
 extern int8_t stencilHigh[128];
+int16_t dirtyLineY0 = 0;
+int16_t dirtyLineY1 = 200;
 
 /*
     *         /|x1y0

@@ -31,8 +31,8 @@ extern uint8_t cursorPosition;
 extern int32_t nextNavigationSelection;
 extern int32_t menuStateToReturn;
 
-uint32_t stateTick;
-uint32_t globalTick;
+extern uint32_t stateTick;
+extern uint32_t globalTick;
 
 int menuTick(long ms);
 
