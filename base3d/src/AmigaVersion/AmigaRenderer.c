@@ -9,6 +9,14 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#include <graphics/gfxbase.h>
+#include <graphics/rastport.h>
+#include <graphics/view.h>
+#include <graphics/gfx.h>
+#include <proto/intuition.h>
+#include <proto/graphics.h>
+#include <intuition/intuition.h>
+#include <graphics/gels.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
@@ -131,7 +139,7 @@ struct NewWindow my_new_window = {
         ACTIVATE,                      /*            */
         NULL,                          /* FirstGadget */
         NULL,                          /* CheckMark   */
-        (UBYTE * ) "The Mistral Report",              /* Title       */
+        (UBYTE * ) "Blank - the game",              /* Title       */
 NULL,                          /* Screen      */
 NULL,                          /* BitMap      */
         320,                          /* MinWidth    */
@@ -607,6 +615,6 @@ void flipRenderer() {
     DisownBlitter();
 #endif
 #else
-    WriteChunkyPixels(my_window->RPort, 0, 0, 256, 128, &framebuffer[0], 320);
+    WriteChunkyPixels(my_window->RPort, 0, 0, 320, 200, &framebuffer[0], 320);
 #endif
 }
