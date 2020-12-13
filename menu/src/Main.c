@@ -13,7 +13,6 @@
 #include "CRenderer.h"
 #include "CPackedFileReader.h"
 
-
 void initHW() {
 #ifdef CD32
     initFileReader("base5.pfs");
@@ -34,6 +33,8 @@ void shutdownHW() {
     graphicsShutdown();
 }
 
+extern unsigned long t0, t1, t2;
+
 int main(int argc, char **argv) {
 
     initHW();
@@ -44,6 +45,8 @@ int main(int argc, char **argv) {
     }
     unloadStateCallback();
     shutdownHW();
+
+    printf("t0 = %zu, t1 = %zu, t2 = %zu\n", t0, t1, t2);
 
     return 0;
 }

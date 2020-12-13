@@ -17,6 +17,13 @@
 #include <proto/graphics.h>
 #include <intuition/intuition.h>
 #include <graphics/gels.h>
+#include <utility/date.h>
+
+
+#include <utility/date.h>
+#include <clib/timer_protos.h>
+#include <clib/exec_protos.h>
+
 #include <string.h>
 #include <assert.h>
 #include <math.h>
@@ -37,6 +44,24 @@
 #include "Engine.h"
 #include "LoadBitmap.h"
 #include "CRenderer.h"
+
+static struct IORequest timereq;
+struct Library *TimerBase;
+
+static struct timeval startTime;
+
+void startup(){
+    GetSysTime(&startTime);
+}
+
+unsigned long getMilliseconds(){
+    struct timeval endTime;
+
+    GetSysTime(&endTime);
+    SubTime(&endTime, &startTime);
+
+    return (endTime.tv_secs * 1000 + endTime.tv_micro / 1000);
+}
 
 #define REG(xn, parm) parm __asm(#xn)
 #define REGARGS __regargs
@@ -71,6 +96,8 @@ extern struct ExecBase *SysBase;
 
 struct Window *my_window;
 struct Screen *screen;
+
+unsigned long t0, t1, t2;
 
 #ifdef CD32
 struct NewScreen xnewscreen = {
@@ -459,6 +486,38 @@ void graphicsInit() {
     SetPointer(my_window, emptypointer, 1, 16, 0, 0);
 
     defaultFont = loadBitmap("font.img");
+
+    OpenDevice("timer.device", 0, &timereq, 0);
+    TimerBase = timereq.io_Device;
+    startup();
+    for ( int c = 0; c < 10; ++c) {
+        OwnBlitter();
+        c2p1x1_4_c5_bm(320, dirtyLineY1 - dirtyLineY0, 0, dirtyLineY0, &framebuffer[dirtyLineY0 * 320],
+                       my_window->RPort->BitMap);
+        DisownBlitter();
+    }
+    t0 = getMilliseconds();
+
+    startup();
+    OwnBlitter();
+    for ( int c = 0; c < 10; ++c ) {
+        c2p1x1_4_c5_bm(320, dirtyLineY1 - dirtyLineY0, 0, dirtyLineY0, &framebuffer[dirtyLineY0 * 320],
+                       my_window->RPort->BitMap);
+    }
+    DisownBlitter();
+    t1 = getMilliseconds();
+
+
+
+    OwnBlitter();
+    startup();
+    for ( int c = 0; c < 10; ++c ) {
+        c2p1x1_4_c5_bm(320, dirtyLineY1 - dirtyLineY0, 0, dirtyLineY0, &framebuffer[dirtyLineY0 * 320],
+                       my_window->RPort->BitMap);
+    }
+    t2 = getMilliseconds();
+    DisownBlitter();
+
 }
 
 /*

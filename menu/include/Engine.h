@@ -84,4 +84,10 @@ void enterState(enum EGameMenuState State);
 
 /* 84ms * 6 blinks == ~500ms */
 #define MENU_ITEM_TIME_TO_BLINK_MS 84
+
+
+void startup();
+
+unsigned long getMilliseconds();
+
 #endif

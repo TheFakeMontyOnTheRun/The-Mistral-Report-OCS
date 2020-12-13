@@ -87,6 +87,11 @@ void muteSound() {}
     [self setNeedsDisplay: YES ];
 }
 
+void startup() {}
+
+unsigned long getMilliseconds() {
+    return 0;
+}
 
 void graphicsPut(int x, int y, uint8_t pixel ) {
     int offset = (320 * y) + (x << 1);

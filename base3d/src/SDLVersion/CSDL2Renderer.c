@@ -240,6 +240,14 @@ void graphicsShutdown() {
     releaseBitmap(defaultFont);
 }
 
+unsigned long t0, t1, t2;
+
+void startup() {}
+
+unsigned long getMilliseconds() {
+    return 3;
+}
+
 void flipRenderer() {
     SDL_Rect rect;
     uint32_t pixel;
