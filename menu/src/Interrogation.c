@@ -46,6 +46,7 @@ int8_t cameraRotation = 0;
 int8_t viewMenu;
 int nextDirtyLineY1;
 
+unsigned long lastTime = 0;
 void fix_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
 
 struct Texture *montyTexture;
@@ -781,8 +782,11 @@ void Interrogation_repaintCallback() {
     fill(0, 64, 256, 64, 7, FALSE);
 
     drawRect(0, 0, 256, 128, 0);
+    startup();
     renderScene();
 
+    lastTime = getMilliseconds();
+    
     int farthest = 0;
 
 
@@ -799,6 +803,11 @@ void Interrogation_repaintCallback() {
     } else {
         nextDirtyLineY1 = 127;
     }
+    
+    
+    char buffer[256];
+    sprintf(&buffer[0], "%zu", lastTime);
+    drawTextAt(1, 1, &buffer[0], 5);
     
     if (viewMenu != -1) {
         int level = 0;
