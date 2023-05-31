@@ -16,6 +16,7 @@
 #include "Engine.h"
 #include "CRenderer.h"
 #include "CPackedFileReader.h"
+#include "UI.h"
 
 extern size_t biggestOption;
 

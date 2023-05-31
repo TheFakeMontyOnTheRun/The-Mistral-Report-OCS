@@ -35,6 +35,8 @@ void shutdownHW() {
 
 extern unsigned long t0, t1, t2;
 
+void mainLoop(void);
+
 int main(int argc, char **argv) {
 
     initHW();
